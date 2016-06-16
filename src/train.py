@@ -23,12 +23,12 @@ if __name__ == '__main__':
 
     # Get params (Arguments)
     parser = ArgumentParser(description='SRCNN chainer')
-    parser.add_argument('--gpu', '-g', type=int, default=0, help='GPU ID (negative value indicates CPU)')
-    parser.add_argument('--arch', '-a', default='1', help='model selection (basic_cnn_tail, basic_cnn_middle, ...)')
+    parser.add_argument('--gpu', '-g', type=int, default=-1, help='GPU ID (negative value indicates CPU)')
+    parser.add_argument('--arch', '-a', default='basic_cnn_tail', help='model selection (basic_cnn_tail, basic_cnn_middle, ...)')
     parser.add_argument('--batchsize', '-B', type=int, default=32, help='Learning minibatch size')
     parser.add_argument('--val_batchsize', '-b', type=int, default=250, help='Validation minibatch size')
     parser.add_argument('--epoch', '-E', default=1000, type=int, help='Number of epochs to learn')
-    parser.add_argument('--color', '-c', default='rgb', help='training color scheme: \'yonly\' or \'rgb\' ')
+    parser.add_argument('--color', '-c', default='rgb', help='training scheme for input/output color: \'yonly\' or \'rgb\' ')
 
     args = parser.parse_args()
 
@@ -37,24 +37,33 @@ if __name__ == '__main__':
     visualize_test_img_number = 5  # #of images to visualize for checking training performance
     xp = cuda.cupy if args.gpu >= 0 else np
 
+    if args.color == 'yonly':
+        inout_ch = 1
+    elif args.color == 'rgb':
+        inout_ch = 3
+    else:
+        raise ValueError('Invalid color training scheme')
+
     # Prepare model
     print('prepare model')
-    if args.model == 'basic_cnn_tail':
-        import arch.basic_cnn_tail as basic_cnn_tail
-        model = basic_cnn_tail.basic_cnn_tail(args.color)
-        training_process_folder = basic_cnn_tail.training_process_folder
-    elif args.arch == 'alex':
-        import alex
-        model = alex.Alex()
+    if args.arch == 'basic_cnn_tail':
+        import arch.basic_cnn_tail as model_arch
+        model = model_arch.basic_cnn_tail(inout_ch=inout_ch)
     else:
         raise ValueError('Invalid architecture name')
+
+    # Directory/File setting for training log
+    if args.color == 'yonly':
+        training_process_folder = model_arch.training_process_folder_yonly
+    elif args.color == 'rgb':
+        training_process_folder = model_arch.training_process_folder_rgb
 
     if not os.path.exists(training_process_folder):
         os.makedirs(training_process_folder)
     os.chdir(training_process_folder)
     train_log_file_name = 'train.log'
     train_log_file = open(os.path.join(training_process_folder, train_log_file_name), 'w')
-    total_image_padding = 14 #24 #18 #14
+    #total_image_padding = 14 #24 #18 #14
 
     """ Load data """
     print('loading data')
@@ -112,7 +121,7 @@ if __name__ == '__main__':
     optimizer.setup(model)
 
     """ Setup GPU """
-    if args.gpu  >= 0:
+    if args.gpu >= 0:
         cuda.get_device(args.gpu).use()
         model.to_gpu()
 
@@ -146,9 +155,13 @@ if __name__ == '__main__':
             y_batch = np_train_set_y[perm[i: i + batch_size]]
             #x_batch = xp.asarray(train_scaled_x[perm[i: i + batch_size]])
             #y_batch = xp.asarray(np_train_set_y[perm[i: i + batch_size]])
+            x_batch = model.preprocess_x(x_batch)
+
+            x = Variable(xp.asarray(x_batch, dtype=xp.float32))
+            t = Variable(xp.asarray(y_batch, dtype=xp.float32))
 
             optimizer.zero_grads()
-            loss = model.forward(x_batch, y_batch)
+            loss = model.forward(x, t)
             loss.backward()
             optimizer.update()
             sum_loss += float(loss.data) * len(y_batch)
@@ -166,7 +179,12 @@ if __name__ == '__main__':
             x_batch = np_valid_set_x[i: i + batch_size]
             y_batch = np_valid_set_y[i: i + batch_size]
 
-            loss = model.forward(x_batch, y_batch)
+            x_batch = model.preprocess_x(x_batch)
+
+            x = Variable(xp.asarray(x_batch, dtype=xp.float32))
+            t = Variable(xp.asarray(y_batch, dtype=xp.float32))
+
+            loss = model.forward(x, t)
             sum_loss += float(loss.data) * len(y_batch)
 
         this_validation_loss = (sum_loss / n_valid)
@@ -187,7 +205,12 @@ if __name__ == '__main__':
                 x_batch = np_test_set_x[i: i + batch_size]
                 y_batch = np_test_set_y[i: i + batch_size]
 
-                loss = model.forward(x_batch, y_batch)
+                x_batch = model.preprocess_x(x_batch)
+
+                x = Variable(xp.asarray(x_batch, dtype=xp.float32))
+                t = Variable(xp.asarray(y_batch, dtype=xp.float32))
+
+                loss = model.forward(x, t)
                 sum_loss += float(loss.data) * len(y_batch)
             test_score = (sum_loss / n_test)
             print('  epoch %i, test cost of best model %f' %
@@ -205,7 +228,7 @@ if __name__ == '__main__':
             print('done_looping')
             break
 
-        # Check test images
+        # Check test imagles
         if epoch // 10 == 0 or epoch % 10 == 0:
             #model.train = False
             #x_batch = xp.asarray(test_scaled_x[0:5])

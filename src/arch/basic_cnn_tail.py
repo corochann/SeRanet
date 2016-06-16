@@ -5,10 +5,14 @@ import chainer.links as L
 
 import os
 
+import src.tools.image_processing as image_processing
 
 """ Configuration """
 file_path = os.path.dirname(os.path.realpath(__file__))
-training_process_folder = os.path.join(file_path, '../../data/training_process_basic_cnn_tail')
+training_process_folder_yonly = os.path.join(file_path, '../../data/training_process_basic_cnn_tail_yonly')
+training_process_folder_rgb = os.path.join(file_path, '../../data/training_process_basic_cnn_tail_rgb')
+
+total_padding = 14
 
 
 class basic_cnn_tail(Chain):
@@ -40,6 +44,15 @@ class basic_cnn_tail(Chain):
         h = F.leaky_relu(self.conv6(h), slope=0.1)
         h = F.clipped_relu(self.conv7(h), z=1.0)
         return h
+
+    def preprocess_x(self, x_data):
+        """
+        model specific preprocessing
+        :param x_data:
+        :return:
+        """
+        scaled_x = image_processing.nearest_neighbor_2x(x_data)
+        return image_processing.image_padding(scaled_x, total_padding // 2)
 
     def clear(self):
         self.loss = None
