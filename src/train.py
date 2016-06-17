@@ -26,7 +26,7 @@ if __name__ == '__main__':
     parser = ArgumentParser(description='SRCNN chainer')
     parser.add_argument('--gpu', '-g', type=int, default=0, help='GPU ID (negative value indicates CPU)')
     parser.add_argument('--arch', '-a', default='basic_cnn_tail', help='model selection (basic_cnn_tail, basic_cnn_middle, ...)')
-    parser.add_argument('--batchsize', '-B', type=int, default=32, help='Learning minibatch size')
+    parser.add_argument('--batchsize', '-B', type=int, default=5, help='Learning minibatch size')
     parser.add_argument('--val_batchsize', '-b', type=int, default=250, help='Validation minibatch size')
     parser.add_argument('--epoch', '-E', default=1000, type=int, help='Number of epochs to learn')
     parser.add_argument('--color', '-c', default='rgb', help='training scheme for input/output color: \'yonly\' or \'rgb\' ')
@@ -161,7 +161,7 @@ if __name__ == '__main__':
             #x_batch = xp.asarray(train_scaled_x[perm[i: i + batch_size]])
             #y_batch = xp.asarray(np_train_set_y[perm[i: i + batch_size]])
             x_batch = model.preprocess_x(x_batch)
-            print('x_batch', x_batch.shape, x_batch.dtype)
+            # print('x_batch', x_batch.shape, x_batch.dtype)
 
             x = Variable(xp.asarray(x_batch))
             t = Variable(xp.asarray(y_batch))
@@ -176,7 +176,6 @@ if __name__ == '__main__':
             #sum_loss += float(loss.data) * len(y_batch)
             # end_iter_time = timeit.default_timer()
             # print("iter took: %f sec" % (end_iter_time - start_iter_time))  # GPU -> iter took: 0.138625 sec
-            time.sleep(10.)
 
         print("train mean loss: %f" % (sum_loss / n_train))
         print("train mean loss: %f" % (sum_loss / n_train), file=train_log_file)

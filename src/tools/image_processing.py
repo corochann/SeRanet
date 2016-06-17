@@ -3,7 +3,7 @@ import numpy as np
 
 
 def nearest_neighbor_2x(pre_scaled_x):
-    print('pre_scaled_x.shape', pre_scaled_x.shape)
+    # print('pre_scaled_x.shape', pre_scaled_x.shape)
     scaled_x = np.ndarray((pre_scaled_x.shape[0],
                          pre_scaled_x.shape[1],
                          pre_scaled_x.shape[2] * 2,
