@@ -51,8 +51,8 @@ def build_data(image_save_flag=False, mode='yonly', remove_flag=False):
         # print root, dirs, files
         batch_size = len(files)
         print('file size', len(files))
-        data_x = np.empty((batch_size, image_channel_number, crop_height / 2, crop_width / 2))
-        data_y = np.empty((batch_size, image_channel_number, crop_height, crop_width))
+        data_x = np.ndarray((batch_size, image_channel_number, crop_height / 2, crop_width / 2))
+        data_y = np.ndarray((batch_size, image_channel_number, crop_height, crop_width))
 
         skip_count = 0
         for file in files:

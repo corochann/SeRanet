@@ -7,6 +7,7 @@ import os
 import numpy as np
 import cPickle as pickle
 import timeit
+import time
 from argparse import ArgumentParser
 
 import chainer
@@ -23,7 +24,7 @@ if __name__ == '__main__':
 
     # Get params (Arguments)
     parser = ArgumentParser(description='SRCNN chainer')
-    parser.add_argument('--gpu', '-g', type=int, default=-1, help='GPU ID (negative value indicates CPU)')
+    parser.add_argument('--gpu', '-g', type=int, default=0, help='GPU ID (negative value indicates CPU)')
     parser.add_argument('--arch', '-a', default='basic_cnn_tail', help='model selection (basic_cnn_tail, basic_cnn_middle, ...)')
     parser.add_argument('--batchsize', '-B', type=int, default=32, help='Learning minibatch size')
     parser.add_argument('--val_batchsize', '-b', type=int, default=250, help='Validation minibatch size')
@@ -35,6 +36,8 @@ if __name__ == '__main__':
     n_epoch = args.epoch           # #of training epoch
     batch_size = args.batchsize    # size of minibatch
     visualize_test_img_number = 5  # #of images to visualize for checking training performance
+    if args.gpu >= 0:
+        cuda.check_cuda_available()
     xp = cuda.cupy if args.gpu >= 0 else np
 
     if args.color == 'yonly':
@@ -114,16 +117,18 @@ if __name__ == '__main__':
         cv2.imwrite(os.path.join(training_process_folder, 'photo' + str(i) + '_original.jpg'),
                     np_test_set_y[i].transpose(1, 2, 0) * 255.)
 
+    """ Setup GPU """
     """ Model, optimizer setup """
     print('setup model')
-    optimizer = optimizers.Adam(alpha=0.0001)
-    # optimizer = optimizers.AdaDelta()
-    optimizer.setup(model)
-
-    """ Setup GPU """
     if args.gpu >= 0:
         cuda.get_device(args.gpu).use()
         model.to_gpu()
+
+    # optimizer = optimizers.Adam(alpha=0.0001)
+    # optimizer = optimizers.AdaDelta()
+    optimizer = optimizers.MomentumSGD(lr=0.01, momentum=0.9)
+    optimizer.setup(model)
+
 
     """ Training """
     print('training')
@@ -151,22 +156,27 @@ if __name__ == '__main__':
             iteration += 1
             if iteration % 100 == 0:
                 print('training @ iter ', iteration)
-            x_batch = np_train_set_x[perm[i: i + batch_size]]
-            y_batch = np_train_set_y[perm[i: i + batch_size]]
+            x_batch = np_train_set_x[perm[i: i + batch_size]].copy()
+            y_batch = np_train_set_y[perm[i: i + batch_size]].copy()
             #x_batch = xp.asarray(train_scaled_x[perm[i: i + batch_size]])
             #y_batch = xp.asarray(np_train_set_y[perm[i: i + batch_size]])
             x_batch = model.preprocess_x(x_batch)
+            print('x_batch', x_batch.shape, x_batch.dtype)
 
-            x = Variable(xp.asarray(x_batch, dtype=xp.float32))
-            t = Variable(xp.asarray(y_batch, dtype=xp.float32))
+            x = Variable(xp.asarray(x_batch))
+            t = Variable(xp.asarray(y_batch))
 
-            optimizer.zero_grads()
-            loss = model.forward(x, t)
-            loss.backward()
-            optimizer.update()
-            sum_loss += float(loss.data) * len(y_batch)
+            optimizer.update(model, x, t)
+            sum_loss += float(model.loss.data) * len(y_batch)
+
+            #optimizer.zero_grads()
+            #loss = model.forward(x, t)
+            #loss.backward()
+            #optimizer.update()
+            #sum_loss += float(loss.data) * len(y_batch)
             # end_iter_time = timeit.default_timer()
             # print("iter took: %f sec" % (end_iter_time - start_iter_time))  # GPU -> iter took: 0.138625 sec
+            time.sleep(10.)
 
         print("train mean loss: %f" % (sum_loss / n_train))
         print("train mean loss: %f" % (sum_loss / n_train), file=train_log_file)

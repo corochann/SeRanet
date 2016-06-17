@@ -33,7 +33,8 @@ class basic_cnn_tail(Chain):
         )
         self.train = True
 
-    def __call__(self, x):
+    def __call__(self, x, t=None):
+        self.clear()
         #x = Variable(x_data)  # x_data.astype(np.float32)
 
         h = F.leaky_relu(self.conv1(x), slope=0.1)
@@ -43,7 +44,11 @@ class basic_cnn_tail(Chain):
         h = F.leaky_relu(self.conv5(h), slope=0.1)
         h = F.leaky_relu(self.conv6(h), slope=0.1)
         h = F.clipped_relu(self.conv7(h), z=1.0)
-        return h
+        if self.train:
+            self.loss = F.mean_squared_error(h, t)
+            return self.loss
+        else:
+            return h
 
     def preprocess_x(self, x_data):
         """
