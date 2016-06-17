@@ -63,12 +63,13 @@ class basic_cnn_tail(Chain):
         self.loss = None
         # self.accuracy = None
 
-    def forward(self, x, t):
-        self.clear()
-        #x = chainer.Variable(x_data)  # x_data.astype(np.float32)
-        #t = chainer.Variable(t_data)  # [Note]: x_data, t_data must be np.float32 type
-
-        #self.loss = F.huber_loss(h, t, delta= 1 / 255.)
-        self.loss = F.mean_squared_error(self(x), t)
-        # self.accuracy = F.accuracy(h, t)  # type inconpatible
-        return self.loss
+#    def forward(self, x, t):
+#        self.clear()
+#        #x = chainer.Variable(x_data)  # x_data.astype(np.float32)
+#        #t = chainer.Variable(t_data)  # [Note]: x_data, t_data must be np.float32 type
+#
+#        #self.loss = F.huber_loss(h, t, delta= 1 / 255.)
+#        self.loss = F.mean_squared_error(self(x), t)
+#        # self.accuracy = F.accuracy(h, t)  # type inconpatible
+#        return self.loss
+#

@@ -25,11 +25,12 @@ if __name__ == '__main__':
     # Get params (Arguments)
     parser = ArgumentParser(description='SRCNN chainer')
     parser.add_argument('--gpu', '-g', type=int, default=0, help='GPU ID (negative value indicates CPU)')
-    parser.add_argument('--arch', '-a', default='basic_cnn_tail', help='model selection (basic_cnn_tail, basic_cnn_middle, ...)')
+    parser.add_argument('--arch', '-a', default='basic_cnn_tail',
+                        help='model selection (basic_cnn_tail, basic_cnn_middle, basic_cnn_head, basic_cnn_small)')
     parser.add_argument('--batchsize', '-B', type=int, default=5, help='Learning minibatch size')
-    parser.add_argument('--val_batchsize', '-b', type=int, default=250, help='Validation minibatch size')
-    parser.add_argument('--epoch', '-E', default=1000, type=int, help='Number of epochs to learn')
-    parser.add_argument('--color', '-c', default='rgb', help='training scheme for input/output color: \'yonly\' or \'rgb\' ')
+    #parser.add_argument('--val_batchsize', '-b', type=int, default=250, help='Validation minibatch size')
+    parser.add_argument('--epoch', '-E', default=1000, type=int, help='Number of max epochs to learn')
+    parser.add_argument('--color', '-c', default='rgb', help='training scheme for input/output color: (yonly, rgb)')
 
     args = parser.parse_args()
 
@@ -52,6 +53,16 @@ if __name__ == '__main__':
     if args.arch == 'basic_cnn_tail':
         import arch.basic_cnn_tail as model_arch
         model = model_arch.basic_cnn_tail(inout_ch=inout_ch)
+    elif args.arch == 'basic_cnn_middle':
+        import arch.basic_cnn_middle as model_arch
+        model = model_arch.basic_cnn_middle(inout_ch=inout_ch)
+    elif args.arch == 'basic_cnn_head':
+        import arch.basic_cnn_head as model_arch
+        model = model_arch.basic_cnn_head(inout_ch=inout_ch)
+    elif args.arch == 'basic_cnn_small':
+        import arch.basic_cnn_small as model_arch
+        model = model_arch.basic_cnn_small(inout_ch=inout_ch)
+
     else:
         raise ValueError('Invalid architecture name')
 
@@ -124,9 +135,9 @@ if __name__ == '__main__':
         cuda.get_device(args.gpu).use()
         model.to_gpu()
 
-    # optimizer = optimizers.Adam(alpha=0.0001)
+    optimizer = optimizers.Adam(alpha=0.0001)
     # optimizer = optimizers.AdaDelta()
-    optimizer = optimizers.MomentumSGD(lr=0.01, momentum=0.9)
+    # optimizer = optimizers.MomentumSGD(lr=0.01, momentum=0.9)
     optimizer.setup(model)
 
 
@@ -193,7 +204,7 @@ if __name__ == '__main__':
             x = Variable(xp.asarray(x_batch, dtype=xp.float32))
             t = Variable(xp.asarray(y_batch, dtype=xp.float32))
 
-            loss = model.forward(x, t)
+            loss = model(x, t)
             sum_loss += float(loss.data) * len(y_batch)
 
         this_validation_loss = (sum_loss / n_valid)
@@ -219,7 +230,7 @@ if __name__ == '__main__':
                 x = Variable(xp.asarray(x_batch, dtype=xp.float32))
                 t = Variable(xp.asarray(y_batch, dtype=xp.float32))
 
-                loss = model.forward(x, t)
+                loss = model(x, t)
                 sum_loss += float(loss.data) * len(y_batch)
             test_score = (sum_loss / n_test)
             print('  epoch %i, test cost of best model %f' %
@@ -239,22 +250,26 @@ if __name__ == '__main__':
 
         # Check test imagles
         if epoch // 10 == 0 or epoch % 10 == 0:
-            #model.train = False
+            model.train = False
             #x_batch = xp.asarray(test_scaled_x[0:5])
             #y_batch = xp.asarray(np_test_set_y[0:5])
             x_batch = np_test_set_x[0:5]
             #output = model.forward(x_batch, y_batch)
-            output = model(x_batch)
+            x_batch = model.preprocess_x(x_batch)
+            x = Variable(xp.asarray(x_batch, dtype=xp.float32))
+            output = model(x)
 
             if (args.gpu >= 0):
-                output = cuda.cupy.asnumpy(output)
+                output_data = cuda.cupy.asnumpy(output.data)
+            else:
+                output_data = output.data
 
             #print('output_img0: ', output[0].transpose(1, 2, 0) * 255.)
             for photo_id in xrange(visualize_test_img_number):
                 cv2.imwrite(os.path.join(training_process_folder,
                                          'photo' + str(photo_id) + '_epoch' + str(epoch) + '.jpg'),
-                            output[photo_id].transpose(1, 2, 0) * 255.)
-            #model.train = True
+                            output_data[photo_id].transpose(1, 2, 0) * 255.)
+            model.train = True
 
         end_time = timeit.default_timer()
         print('epoch %i took %i sec' % (epoch, end_time - start_time))
