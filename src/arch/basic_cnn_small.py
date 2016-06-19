@@ -9,10 +9,9 @@ import src.tools.image_processing as image_processing
 
 """ Configuration """
 file_path = os.path.dirname(os.path.realpath(__file__))
-training_process_folder_yonly = os.path.join(file_path, '../../data/training_process_basic_cnn_small_yonly')
-training_process_folder_rgb = os.path.join(file_path, '../../data/training_process_basic_cnn_small_rgb')
+arch_folder = os.path.join(file_path, '../../data/arch/basic_cnn_small')
 
-total_padding = 8
+total_padding = 10
 
 
 class basic_cnn_small(Chain):
@@ -22,10 +21,11 @@ class basic_cnn_small(Chain):
     """
     def __init__(self, inout_ch):
         super(basic_cnn_small, self).__init__(
-            conv1=L.Convolution2D(in_channels=inout_ch, out_channels=32, ksize=3, stride=1),
-            conv2=L.Convolution2D(32, 64, 3, stride=1),
-            conv3=L.Convolution2D(64, 128, 3, stride=1),
-            conv4=L.Convolution2D(128, inout_ch, 3, stride=1),
+            conv1=L.Convolution2D(in_channels=inout_ch, out_channels=16, ksize=3, stride=1),
+            conv2=L.Convolution2D(16, 16, 3, stride=1),
+            conv3=L.Convolution2D(16, 32, 3, stride=1),
+            conv4=L.Convolution2D(32, 32, 3, stride=1),
+            conv5=L.Convolution2D(32, inout_ch, 3, stride=1),
         )
         self.train = True
 
@@ -35,7 +35,8 @@ class basic_cnn_small(Chain):
         h = F.leaky_relu(self.conv1(x), slope=0.1)
         h = F.leaky_relu(self.conv2(h), slope=0.1)
         h = F.leaky_relu(self.conv3(h), slope=0.1)
-        h = F.clipped_relu(self.conv4(h), z=1.0)
+        h = F.leaky_relu(self.conv4(h), slope=0.1)
+        h = F.clipped_relu(self.conv5(h), z=1.0)
         if self.train:
             self.loss = F.mean_squared_error(h, t)
             return self.loss

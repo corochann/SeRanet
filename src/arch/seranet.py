@@ -11,8 +11,7 @@ from convolution_rbm import ConvolutionRBM
 
 """ Configuration """
 file_path = os.path.dirname(os.path.realpath(__file__))
-training_process_folder_yonly = os.path.join(file_path, '../../data/training_process_seranet_yonly')
-training_process_folder_rgb = os.path.join(file_path, '../../data/training_process_seranet_rgb')
+arch_folder = os.path.join(file_path, '../../data/arch/seranet')
 
 total_padding = 18
 
@@ -35,35 +34,35 @@ class seranet(Chain):
             convru3=L.Convolution2D(64, 64, 3),
             convld3=L.Convolution2D(64, 64, 3),
             convrd3=L.Convolution2D(64, 64, 3),
-            convlu4=L.Convolution2D(64, 128, 3),
-            convru4=L.Convolution2D(64, 128, 3),
-            convld4=L.Convolution2D(64, 128, 3),
-            convrd4=L.Convolution2D(64, 128, 3),
-            convlu5=L.Convolution2D(128, 128, 3),
-            convru5=L.Convolution2D(128, 128, 3),
-            convld5=L.Convolution2D(128, 128, 3),
-            convrd5=L.Convolution2D(128, 128, 3),
+            convlu4=L.Convolution2D(64, 96, 3),
+            convru4=L.Convolution2D(64, 96, 3),
+            convld4=L.Convolution2D(64, 96, 3),
+            convrd4=L.Convolution2D(64, 96, 3),
+            convlu5=L.Convolution2D(96, 96, 3),
+            convru5=L.Convolution2D(96, 96, 3),
+            convld5=L.Convolution2D(96, 96, 3),
+            convrd5=L.Convolution2D(96, 96, 3),
             crbm1=ConvolutionRBM(inout_ch, 32, 3),
             crbm2=ConvolutionRBM(32, 64, 3),
             crbm3=ConvolutionRBM(64, 64, 3),
-            crbm4=ConvolutionRBM(64, 128, 3),
-            crbm5=ConvolutionRBM(128, 128, 3),
-            convlu6=L.Convolution2D(256, 256, 3),
-            convru6=L.Convolution2D(256, 256, 3),
-            convld6=L.Convolution2D(256, 256, 3),
-            convrd6=L.Convolution2D(256, 256, 3),
-            convlu7=L.Convolution2D(256, 256, 3),
-            convru7=L.Convolution2D(256, 256, 3),
-            convld7=L.Convolution2D(256, 256, 3),
-            convrd7=L.Convolution2D(256, 256, 3),
-            convlu8=L.Convolution2D(256, 128, 3),
-            convru8=L.Convolution2D(256, 128, 3),
-            convld8=L.Convolution2D(256, 128, 3),
-            convrd8=L.Convolution2D(256, 128, 3),
-            convlu9=L.Convolution2D(128, inout_ch, 3),
-            convru9=L.Convolution2D(128, inout_ch, 3),
-            convld9=L.Convolution2D(128, inout_ch, 3),
-            convrd9=L.Convolution2D(128, inout_ch, 3),
+            crbm4=ConvolutionRBM(64, 96, 3),
+            crbm5=ConvolutionRBM(96, 96, 3),
+            convlu6=L.Convolution2D(192, 160, 3),
+            convru6=L.Convolution2D(192, 160, 3),
+            convld6=L.Convolution2D(192, 160, 3),
+            convrd6=L.Convolution2D(192, 160, 3),
+            convlu7=L.Convolution2D(160, 128, 3),
+            convru7=L.Convolution2D(160, 128, 3),
+            convld7=L.Convolution2D(160, 128, 3),
+            convrd7=L.Convolution2D(160, 128, 3),
+            convlu8=L.Convolution2D(128, 64, 3),
+            convru8=L.Convolution2D(128, 64, 3),
+            convld8=L.Convolution2D(128, 64, 3),
+            convrd8=L.Convolution2D(128, 64, 3),
+            convlu9=L.Convolution2D(64, inout_ch, 3),
+            convru9=L.Convolution2D(64, inout_ch, 3),
+            convld9=L.Convolution2D(64, inout_ch, 3),
+            convrd9=L.Convolution2D(64, inout_ch, 3),
         )
         self.train = True
 
@@ -135,7 +134,8 @@ class seranet(Chain):
         else:
             return h
 
-    def preprocess_x(self, x_data):
+    @staticmethod
+    def preprocess_x(x_data):
         """
         model specific preprocessing
         :param x_data:
@@ -146,3 +146,49 @@ class seranet(Chain):
     def clear(self):
         self.loss = None
         # self.accuracy = None
+
+
+class seranet_crbm(Chain):
+    """
+    Sub-network of seranet, used for pre-training
+    """
+    def __init__(self, inout_ch, pretrain_level=1):
+        super(seranet_crbm, self).__init__(
+            crbm1=ConvolutionRBM(inout_ch, 32, 3),
+            crbm2=ConvolutionRBM(32, 64, 3),
+            crbm3=ConvolutionRBM(64, 64, 3),
+            crbm4=ConvolutionRBM(64, 128, 3),
+            crbm5=ConvolutionRBM(128, 128, 3),
+        )
+        self.pretrain_level = pretrain_level
+        if self.pretrain_level == 1:
+            self.crbm1.rbm_train = True
+        elif self.pretrain_level == 2:
+            self.crbm2.rbm_train = True
+        elif self.pretrain_level == 3:
+            self.crbm3.rbm_train = True
+        elif self.pretrain_level == 4:
+            self.crbm4.rbm_train = True
+        elif self.pretrain_level == 5:
+            self.crbm5.rbm_train = True
+
+    def clear(self):
+        self.loss = None
+        # self.accuracy = None
+
+    def __call__(self, x):
+        h = self.crbm1(x)
+        if self.pretrain_level == 1:
+            return h
+        h = self.crbm2(h)
+        if self.pretrain_level == 2:
+            return h
+        h = self.crbm3(h)
+        if self.pretrain_level == 3:
+            return h
+        h = self.crbm4(h)
+        if self.pretrain_level == 4:
+            return h
+        h = self.crbm5(h)
+        return h
+

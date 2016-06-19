@@ -54,7 +54,7 @@ class ConvolutionRBM(chainer.Chain):
 #        if gpu >= 0:
 #            cuda.check_cuda_available()
 #            xp = cuda.cupy # if gpu >= 0 else np
-        self.conv.add_param("a", in_channels, dtype=xp.float32)
+        self.conv.add_param("a", in_channels)  # dtype=xp.float32
         self.conv.a.data.fill(0.)
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -63,11 +63,11 @@ class ConvolutionRBM(chainer.Chain):
 
         self.rbm_train = False  # default value is false
 
-    def __call__(self, x, x_prev_data=None, q_prev=None):
+    def __call__(self, x):
         if self.rbm_train == True:
             """
-            :param v_data:      Variable (batch_size, in_channels, image_height, image_width) - input data (training data)
-            :param x_prev_data: Variable (batch_size, in_channels, image_height, image_width)
+            :param x:      Variable (batch_size, in_channels, image_height, image_width) - input data (training data)
+            :param x_prev: Variable (batch_size, in_channels, image_height, image_width)
                                 - persistent chain, hold persistent state for visible units of model.
                                   (used only for persistent CD.)
             :param q_prev: xp (batch_size, image_height_out, image_width_out)
@@ -82,11 +82,12 @@ class ConvolutionRBM(chainer.Chain):
             else:
                 # Persistent CD, only x_prev_data is used for constructing vh, except for the 1st trial
                 # x_prev_data.unchain_backward()
-                v_input = x_prev_data
+                v_input = self.x_prev
             # t1 = timeit.default_timer()
             ph_mean, ph_sample, vh_mean, vh_sample = self.contrastive_divergence(v_input, self.k)
             # t2 = timeit.default_timer()
-            x_prev_data.data[:] = vh_sample.data[:]  # update x_prev_data for next usage
+            if self.pcd_flag == 1:
+                self.x_prev.data[:] = vh_sample.data[:]  # update x_prev_data for next usage
             # v = Variable(x)
             # vh = Variable(vh_sample.astype(xp.float32))  # vh_sample is not variable
             # vh_sample.unchain_backward()
@@ -96,15 +97,23 @@ class ConvolutionRBM(chainer.Chain):
             '''
             http://deeplearning.net/tutorial/rbm.html eq.(5)
             '''
-            self.loss = (self.free_energy(x) - self.free_energy(vh_mean)) / batch_size
+            positive_phase = self.free_energy(x)
+            negative_phase = self.free_energy(vh_mean)
+            if self.rbm_train_debug:
+                if self.count % 1000 < 5:
+                    print('[CRBM debug] free energy: data (positive phase) = ', positive_phase.data,
+                          ', model (negative_phase) = ', negative_phase.data)
+                self.count += 1
+            self.loss = (positive_phase - negative_phase) / batch_size
             # t3 = timeit.default_timer()
             # print('vh_sample = ', vh_sample.data, ', shape ', vh_sample.data.shape)
             # print('sum vh_sample = ', F.sum(vh_sample).data, ', shape ', vh_sample.data.shape)
             """ Sparsity """
             # (out_channel, image_height_out, image_width_out) - average activation rate
             lambda_q = 0.9
-            q = lambda_q * q_prev + (1 - lambda_q) * F.sum(ph_mean, axis=0) / batch_size
-            q_prev[:] = q.data[:]
+
+            q = lambda_q * self.q_prev + (1 - lambda_q) * F.sum(ph_mean, axis=0) / batch_size
+            self.q_prev[:] = q.data[:]
             # self.loss += self.lambda_s * F.sum((q - self.p) * (q - self.p))  # Sparsity squared penalty
             self.loss += -self.lambda_s * F.sum(self.p * F.log(q) + (1 - self.p) * F.log(1 - q))  # Sparsity log penalty
 
@@ -123,13 +132,23 @@ class ConvolutionRBM(chainer.Chain):
         else:
             return F.sigmoid(self.conv(x))
 
-    @staticmethod
-    def sigmoid(x):
-        xp = cuda.get_array_module(x)
-        return 1. / (1 + xp.exp(-x))
-
-    def set_rbm_training_parameter(self, k=1, pcd_flag=0, lambda_w=0., p=0.1, lambda_s=0., std=np.asarray([1.0])):
+    def set_rbm_training_parameter(self, k=1, pcd_flag=0, lambda_w=0., p=0.1, lambda_s=0., std=np.asarray([1.0]),
+                                   rbm_train_debug=False):
+        """
+        This function need to be called for rbm_training
+        After that, it is also necessary to call init_persistent_params
+        :param k:
+        :param pcd_flag:
+        :param lambda_w:
+        :param p:
+        :param lambda_s:
+        :param std:
+        :param rbm_train_debug:
+        :return:
+        """
         self.rbm_train = True
+        self.rbm_train_debug = rbm_train_debug
+        self.count = 0  # count for debug print
         self.k = k
         self.pcd_flag = pcd_flag
         self.lambda_w = lambda_w
@@ -138,6 +157,26 @@ class ConvolutionRBM(chainer.Chain):
         self.std = std  # only used for real (Gaussian-Bernoulli RBM)
         #self.std_ch = xp.reshape(self.std, (1, in_channels, 1, 1))
         #self.gpu = gpu
+        self.x_prev = None
+        self.q_prev = None
+
+    def init_persistent_params(self, x):
+        """
+        x_prev: Variable (batch_size, in_channels, image_height, image_width)
+                                - persistent chain, hold persistent state for visible units of model.
+                                  (used only for persistent CD.)
+        q_prev: xp (batch_size, image_height_out, image_width_out)
+        :param x:
+        :return:
+        """
+        if self.pcd_flag == 1:
+            self.x_prev = x
+        h_mean = self.propup(x)
+
+        # print('h_mean shape', h_mean.data.shape)
+        xp = cuda.get_array_module(h_mean.data)
+        prev_q = xp.asarray(xp.zeros((h_mean.data.shape[1:])), dtype=xp.float32)
+        self.q_prev = prev_q
 
     def forward(self, v_data, v_prev_data=None, q_prev=None):
         """
@@ -224,6 +263,7 @@ class ConvolutionRBM(chainer.Chain):
             #TODO: check
             #m = Variable(xp.ones((batch_size, 1), dtype=xp.float32))
             n = F.reshape(self.conv.a, (1, in_channels, 1, 1))
+            xp = cuda.get_array_module(n.data)
             std_ch = xp.reshape(self.std, (1, in_channels, 1, 1))
 
             #v_ = v - F.matmul(m, n)
@@ -379,3 +419,9 @@ class ConvolutionRBM(chainer.Chain):
         reconstructed_v = F.sigmoid(F.convolution_2d(h, W_flipped, self.conv.a, pad=self.ksize-1))
             # = F.sigmoid(F.matmul(h, self.l.W) + F.broadcast_to(self.l.a, (batch_size, self.n_visible)))
         return reconstructed_v
+
+    @staticmethod
+    def sigmoid(x):
+        xp = cuda.get_array_module(x.data)
+        return 1. / (1 + xp.exp(-x))
+

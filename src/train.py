@@ -23,10 +23,11 @@ if __name__ == '__main__':
     """ Pre setup """
 
     # Get params (Arguments)
-    parser = ArgumentParser(description='SRCNN chainer')
+    parser = ArgumentParser(description='SeRanet training')
     parser.add_argument('--gpu', '-g', type=int, default=0, help='GPU ID (negative value indicates CPU)')
-    parser.add_argument('--arch', '-a', default='basic_cnn_tail',
-                        help='model selection (basic_cnn_tail, basic_cnn_middle, basic_cnn_head, basic_cnn_small)')
+    parser.add_argument('--arch', '-a', default='seranet_v1',
+                        help='model selection (basic_cnn_tail, basic_cnn_middle, basic_cnn_head, basic_cnn_small, '
+                             'seranet, seranet_v1)')
     parser.add_argument('--batchsize', '-B', type=int, default=5, help='Learning minibatch size')
     #parser.add_argument('--val_batchsize', '-b', type=int, default=250, help='Validation minibatch size')
     parser.add_argument('--epoch', '-E', default=1000, type=int, help='Number of max epochs to learn')
@@ -53,6 +54,7 @@ if __name__ == '__main__':
     if args.arch == 'basic_cnn_tail':
         import arch.basic_cnn_tail as model_arch
         model = model_arch.basic_cnn_tail(inout_ch=inout_ch)
+
     elif args.arch == 'basic_cnn_middle':
         import arch.basic_cnn_middle as model_arch
         model = model_arch.basic_cnn_middle(inout_ch=inout_ch)
@@ -62,15 +64,22 @@ if __name__ == '__main__':
     elif args.arch == 'basic_cnn_small':
         import arch.basic_cnn_small as model_arch
         model = model_arch.basic_cnn_small(inout_ch=inout_ch)
+    elif args.arch == 'seranet':
+        import arch.seranet as model_arch
+        model = model_arch.seranet(inout_ch=inout_ch)
+    elif args.arch == 'seranet_v1':
+        import arch.seranet_v1 as model_arch
+        model = model_arch.seranet_v1(inout_ch=inout_ch)
 
     else:
         raise ValueError('Invalid architecture name')
-
+    arch_folder = model_arch.arch_folder
     # Directory/File setting for training log
-    if args.color == 'yonly':
-        training_process_folder = model_arch.training_process_folder_yonly
-    elif args.color == 'rgb':
-        training_process_folder = model_arch.training_process_folder_rgb
+    training_process_folder = os.path.join(arch_folder, args.color, 'training_process')
+#    if args.color == 'yonly':
+#        training_process_folder = model_arch.training_process_folder_yonly
+#    elif args.color == 'rgb':
+#        training_process_folder = model_arch.training_process_folder_rgb
 
     if not os.path.exists(training_process_folder):
         os.makedirs(training_process_folder)
@@ -146,7 +155,7 @@ if __name__ == '__main__':
 
     patience = 30000
     patience_increase = 2
-    improvement_threshold = 0.997  # 0.995
+    improvement_threshold = 0.995  # 0.997
 
     validation_frequency = min(n_train, patience // 2) * 2
 
@@ -178,7 +187,7 @@ if __name__ == '__main__':
             t = Variable(xp.asarray(y_batch))
 
             optimizer.update(model, x, t)
-            sum_loss += float(model.loss.data) * len(y_batch)
+            sum_loss += float(model.loss.data) * batch_size
 
             #optimizer.zero_grads()
             #loss = model.forward(x, t)
@@ -204,8 +213,7 @@ if __name__ == '__main__':
             x = Variable(xp.asarray(x_batch, dtype=xp.float32))
             t = Variable(xp.asarray(y_batch, dtype=xp.float32))
 
-            loss = model(x, t)
-            sum_loss += float(loss.data) * len(y_batch)
+            sum_loss += float(model(x, t).data) * batch_size
 
         this_validation_loss = (sum_loss / n_valid)
         print("valid mean loss: %f" % this_validation_loss)
@@ -230,8 +238,7 @@ if __name__ == '__main__':
                 x = Variable(xp.asarray(x_batch, dtype=xp.float32))
                 t = Variable(xp.asarray(y_batch, dtype=xp.float32))
 
-                loss = model(x, t)
-                sum_loss += float(loss.data) * len(y_batch)
+                sum_loss += float(model(x, t).data) * batch_size
             test_score = (sum_loss / n_test)
             print('  epoch %i, test cost of best model %f' %
                   (epoch, test_score))
@@ -248,7 +255,7 @@ if __name__ == '__main__':
             print('done_looping')
             break
 
-        # Check test imagles
+        # Check test images
         if epoch // 10 == 0 or epoch % 10 == 0:
             model.train = False
             #x_batch = xp.asarray(test_scaled_x[0:5])
@@ -269,6 +276,7 @@ if __name__ == '__main__':
                 cv2.imwrite(os.path.join(training_process_folder,
                                          'photo' + str(photo_id) + '_epoch' + str(epoch) + '.jpg'),
                             output_data[photo_id].transpose(1, 2, 0) * 255.)
+            output = None  # It is important to release memory!
             model.train = True
 
         end_time = timeit.default_timer()

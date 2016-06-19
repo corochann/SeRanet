@@ -9,8 +9,7 @@ import src.tools.image_processing as image_processing
 
 """ Configuration """
 file_path = os.path.dirname(os.path.realpath(__file__))
-training_process_folder_yonly = os.path.join(file_path, '../../data/training_process_basic_cnn_middle_yonly')
-training_process_folder_rgb = os.path.join(file_path, '../../data/training_process_basic_cnn_middle_rgb')
+arch_folder = os.path.join(file_path, '../../data/arch/basic_cnn_head')
 
 total_padding = 14
 
