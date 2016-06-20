@@ -141,9 +141,9 @@ class seranet_v1_crbm(Chain):
         :param lambda_s:
         """
         super(seranet_v1_crbm, self).__init__(
-            crbm1=ConvolutionRBM(inout_ch, 64, 5, wscale=0.01),
-            crbm2=ConvolutionRBM(64, 64, 5, wscale=0.01),
-            crbm3=ConvolutionRBM(64, 128, 5, wscale=0.01),
+            crbm1=ConvolutionRBM(inout_ch, 64, 5, wscale=1.),
+            crbm2=ConvolutionRBM(64, 64, 5, wscale=1.),
+            crbm3=ConvolutionRBM(64, 128, 5, wscale=1.),
         )
         self.pretrain_level = pretrain_level
         if self.pretrain_level == 0:
@@ -195,7 +195,6 @@ class seranet_v1_crbm(Chain):
         if self.pretrain_level == 0:
             print '[Error] It is not pretraining phase'
         elif self.pretrain_level == 1:
-            print 'debug'
             self.crbm1.init_persistent_params(x)
         elif self.pretrain_level == 2:
             h = self.crbm1(x)
@@ -206,6 +205,18 @@ class seranet_v1_crbm(Chain):
             h = self.crbm2(h)
             h.unchain_backward()
             self.crbm3.init_persistent_params(h)
+        else:
+            raise ValueError('pretrain level is out of range')
+
+    def get_target_crbm(self):
+        if self.pretrain_level == 0:
+            print '[Error] It is not pretraining phase'
+        elif self.pretrain_level == 1:
+            return self.crbm1
+        elif self.pretrain_level == 2:
+            return self.crbm2
+        elif self.pretrain_level == 3:
+            return self.crbm3
         else:
             raise ValueError('pretrain level is out of range')
 

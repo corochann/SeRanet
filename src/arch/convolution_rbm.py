@@ -99,11 +99,6 @@ class ConvolutionRBM(chainer.Chain):
             '''
             positive_phase = self.free_energy(x)
             negative_phase = self.free_energy(vh_mean)
-            if self.rbm_train_debug:
-                if self.count % 1000 < 5:
-                    print('[CRBM debug] free energy: data (positive phase) = ', positive_phase.data,
-                          ', model (negative_phase) = ', negative_phase.data)
-                self.count += 1
             self.loss = (positive_phase - negative_phase) / batch_size
             # t3 = timeit.default_timer()
             # print('vh_sample = ', vh_sample.data, ', shape ', vh_sample.data.shape)
@@ -114,11 +109,14 @@ class ConvolutionRBM(chainer.Chain):
 
             q = lambda_q * self.q_prev + (1 - lambda_q) * F.sum(ph_mean, axis=0) / batch_size
             self.q_prev[:] = q.data[:]
-            # self.loss += self.lambda_s * F.sum((q - self.p) * (q - self.p))  # Sparsity squared penalty
-            self.loss += -self.lambda_s * F.sum(self.p * F.log(q) + (1 - self.p) * F.log(1 - q))  # Sparsity log penalty
+            sparse_term = self.lambda_s * F.sum((q - self.p) * (q - self.p))  # Sparsity squared penalty
+            # sparse_term = - self.lambda_s * F.sum(self.p * F.log(q) + (1 - self.p) * F.log(1 - q))
+            self.loss += sparse_term  # Sparsity log penalty
 
-            self.loss += self.lambda_w * 0.5 * F.sum(self.conv.W * self.conv.W)  # Weight decay   L2 regularization
-            # self.loss += self.lambda_w * F.sum(F.leaky_relu(self.conv.W, slope=-1.))  # Weight decay  L1 regularization
+            weight_decay_term = self.lambda_w * 0.5 * F.sum(self.conv.W * self.conv.W)
+            # weight_decay_term = self.lambda_w * F.sum(F.leaky_relu(self.conv.W, slope=-1.))  # Weight decay  L1 regularization
+            self.loss += weight_decay_term  # Weight decay   L2 regularization
+
             # t4 = timeit.default_timer()
             # print('CRBM call: ', t2-t1, ' ', t3-t2, ' ', t4-t3)  # CRBM call:  0.00819110870361   0.00195288658142   0.000527143478394
 
@@ -128,6 +126,15 @@ class ConvolutionRBM(chainer.Chain):
             #      'self.loss after sparse = ', self.loss.data)
             # print('self.conv.a', self.conv.a.data)
             # print('self.conv.b', self.conv.b.data)
+
+            """ DEBUG print """
+            if self.rbm_train_debug:
+                if self.count % 1000 < 5:
+                    print('[CRBM debug] data free energy (positive phase) = ', positive_phase.data / batch_size,
+                          ', model free energy (negative_phase) = ', negative_phase.data / batch_size,
+                          ', sparse_term ', sparse_term.data,
+                          ', weight_decay_term ', weight_decay_term.data)
+                self.count += 1
             return self.loss
         else:
             return F.sigmoid(self.conv(x))

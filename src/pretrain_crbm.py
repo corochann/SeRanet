@@ -10,6 +10,11 @@ import timeit
 import time
 from argparse import ArgumentParser
 
+try:
+    import PIL.Image as Image
+except ImportError:
+    import Image
+
 import chainer
 from chainer import cuda, Function, gradient_check, Variable, optimizers, serializers, utils, Link, Chain, ChainList
 import chainer.functions as F
@@ -17,6 +22,7 @@ import chainer.links as L
 
 from tools.prepare_data import load_data
 from tools.image_processing import preprocess
+from tools.utils import tile_raster_images
 
 if __name__ == '__main__':
 
@@ -28,7 +34,7 @@ if __name__ == '__main__':
     parser.add_argument('--arch', '-a', default='seranet_v1',
                         help='model selection (seranet_v1)')
     parser.add_argument('--level', '-l', type=int, default=1, help='Pretraining level')
-    parser.add_argument('--batchsize', '-B', type=int, default=10, help='Learning minibatch size')
+    parser.add_argument('--batchsize', '-B', type=int, default=20, help='Learning minibatch size')
     #parser.add_argument('--val_batchsize', '-b', type=int, default=250, help='Validation minibatch size')
     parser.add_argument('--epoch', '-E', default=1000, type=int, help='Number of max epochs to learn')
     parser.add_argument('--color', '-c', default='rgb', help='training scheme for input/output color: (yonly, rgb)')
@@ -37,9 +43,9 @@ if __name__ == '__main__':
     #parser.add_argument('--real', '-r', default=0, type=int,
     #                    help='0: use binary unit (Bernoulli), 1: use real unit (Gaussian-Bernoulli)')
 
-    lambda_w = 0.1
-    p = 0.1
-    lambda_s = 0.1
+    lambda_w = 5.0   # weight decay
+    p = 0.05          # sparsity rate
+    lambda_s = 0.001  # sparsity
 
     args = parser.parse_args()
 
@@ -139,9 +145,9 @@ if __name__ == '__main__':
         cuda.get_device(args.gpu).use()
         model.to_gpu()
 
-    optimizer = optimizers.Adam(alpha=0.0001)
+    optimizer = optimizers.Adam(alpha=0.001)
     # optimizer = optimizers.AdaDelta()
-    # optimizer = optimizers.MomentumSGD(lr=0.01, momentum=0.9)
+    # optimizer = optimizers.MomentumSGD(lr=0.0001, momentum=0.9)  # 0.0001 -> value easily explodes
     optimizer.setup(model)
 
 
@@ -244,28 +250,77 @@ if __name__ == '__main__':
         print('epoch %i took %i sec' % (epoch, end_time - start_time), file=train_log_file)
 
 
-#
-#        # Plot filters after each training epoch
-#        plotting_start = timeit.default_timer()
-#        # Construct image from the weight matrix
-#        weight = model.crbm2.conv.W.data
-#        ksize = model.crbm2.ksize
-#
-#        if args.gpu >= 0:
-#            weight = cuda.to_cpu(weight)
-#
-#        image = Image.fromarray(
-#            tile_raster_images(
-#                # X=rbm.W.get_value(borrow=True).T,
-#                X=weight,
-#                img_shape=(ksize, ksize),
-#                tile_shape=(10, 20),
-#                tile_spacing=(1, 1)
-#            )
-#        )
-#        image.save('filters_at_epoch%i.png' % epoch)
-#        plotting_stop = timeit.default_timer()
-#        plotting_time += (plotting_stop - plotting_start)
+        # Construct image from the weight matrix
+        n_chains = 20
+        n_samples = 10
+
+        weight = model.get_target_crbm().conv.W.data[:, 0:1, ...]
+        ksize = model.get_target_crbm().ksize
+
+        if args.gpu >= 0:
+            weight = cuda.to_cpu(weight)
+        if epoch < 10 or epoch % 10 == 0:
+            print(' ... plotting RBM weight')
+            image = Image.fromarray(
+                tile_raster_images(
+                    # X=rbm.W.get_value(borrow=True).T,
+                    X=weight,
+                    img_shape=(ksize, ksize),
+                    tile_shape=(10, 20),
+                    tile_spacing=(1, 1)
+                )
+            )
+            image.save('filters_at_epoch%i.png' % epoch)
+
+        if args.level == 1 and (epoch < 10 or epoch % 10 == 0):
+            """ SAMPLING FROM the RBM """
+            print(' ... plotting RBM reconstruct data')
+            image_size = 116
+            image_data = np.zeros(
+                # ((image_size + 1) * n_samples + 1, (image_size + 1) * n_chains - 1),
+                ((image_size + 1) * n_chains + 1, (image_size + 1) * n_samples - 1),
+                dtype='uint8'
+            )
+            reconstruct_x = Variable(xp.asarray(np_train_set_x[0: 0 + n_samples], dtype=xp.float32))
+            for idx in xrange(n_chains):
+
+                image_piece = reconstruct_x.data[:, 0:1, ...]
+                if args.gpu >= 0:
+                    image_piece = cuda.to_cpu(image_piece)
+                image_data[(image_size + 1) * idx:(image_size + 1) * idx + image_size, :] = tile_raster_images(
+                    X=image_piece,
+                    img_shape=(image_size, image_size),
+                    tile_shape=(1, n_samples),
+                    tile_spacing=(1, 1)
+                )
+
+                # h1_mean, h1_sample, v1_mean, reconstruct_x = rbm.gibbs_vhv(reconstruct_x)
+                reconstruct_x = model.get_target_crbm().reconstruct(reconstruct_x)
+            image = Image.fromarray(image_data)
+            image.save('samples_reconstruct_epoch%i.png' % epoch)
+
+            image_data = np.zeros(
+                # ((image_size + 1) * n_samples + 1, (image_size + 1) * n_chains - 1),
+                ((image_size + 1) * n_chains + 1, (image_size + 1) * n_samples - 1),
+                dtype='uint8'
+            )
+
+            reconstruct_x = Variable(xp.asarray(np_train_set_x[0: 0 + n_samples], dtype=xp.float32))
+            for idx in xrange(n_chains):
+                image_piece = reconstruct_x.data[:, 0:1, ...]
+                if args.gpu >= 0:
+                    image_piece = cuda.to_cpu(image_piece)
+                image_data[(image_size + 1) * idx:(image_size + 1) * idx + image_size, :] = tile_raster_images(
+                    X=image_piece,
+                    img_shape=(image_size, image_size),
+                    tile_shape=(1, n_samples),
+                    tile_spacing=(1, 1)
+                )
+                h1_mean, h1_sample, v1_mean, reconstruct_x = model.get_target_crbm().gibbs_vhv(reconstruct_x)
+
+            image = Image.fromarray(image_data)
+            image.save('samples_gibbs_vhv_epoch%i.png' % epoch)
+
 
     end_time = timeit.default_timer()
 
@@ -273,52 +328,3 @@ if __name__ == '__main__':
 
     print('Training took %i min %i sec' %
           (pretraining_time / 60., pretraining_time % 60))
-
-#    """ SAMPLING FROM the RBM """
-#    image_data = np.zeros(
-#        # (29 * n_samples + 1, 29 * n_chains - 1),
-#        (29 * n_chains + 1, 29 * n_samples - 1),
-#        dtype='uint8'
-#    )
-#    reconstruct_x = Variable(xp.asarray(train_set_x[0: 0 + n_samples], dtype=xp.float32))
-#    for idx in range(n_chains):
-#        print(' ... plotting sample %d' % idx)
-#        image_piece = reconstruct_x.data
-#        if args.gpu >= 0:
-#            image_piece = cuda.to_cpu(image_piece)
-#        image_data[29 * idx:29 * idx + 28, :] = tile_raster_images(
-#            X=image_piece,
-#            img_shape=(28, 28),
-#            tile_shape=(1, n_samples),
-#            tile_spacing=(1, 1)
-#        )
-#
-#        # h1_mean, h1_sample, v1_mean, reconstruct_x = rbm.gibbs_vhv(reconstruct_x)
-#        reconstruct_x = model.crbm1.reconstruct(reconstruct_x)
-#    image = Image.fromarray(image_data)
-#    image.save('samples_reconstruct.png')
-#
-#    image_data = np.zeros(
-#        # (29 * n_samples + 1, 29 * n_chains - 1),
-#        (29 * n_chains + 1, 29 * n_samples - 1),
-#        dtype='uint8'
-#    )
-#
-#    reconstruct_x = Variable(xp.asarray(train_set_x[0: 0 + n_samples], dtype=xp.float32))
-#    for idx in range(n_chains):
-#        print(' ... plotting sample %d' % idx)
-#        image_piece = reconstruct_x.data
-#        if args.gpu >= 0:
-#            image_piece = cuda.to_cpu(image_piece)
-#        image_data[29 * idx:29 * idx + 28, :] = tile_raster_images(
-#            X=image_piece,
-#            img_shape=(28, 28),
-#            tile_shape=(1, n_samples),
-#            tile_spacing=(1, 1)
-#        )
-#        h1_mean, h1_sample, v1_mean, reconstruct_x = model.crbm1.gibbs_vhv(reconstruct_x)
-#
-#    image = Image.fromarray(image_data)
-#    image.save('samples_gibbs_vhv.png')
-#    os.chdir('../')
-
