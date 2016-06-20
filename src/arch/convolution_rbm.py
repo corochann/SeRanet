@@ -70,9 +70,10 @@ class ConvolutionRBM(chainer.Chain):
             :param x_prev: Variable (batch_size, in_channels, image_height, image_width)
                                 - persistent chain, hold persistent state for visible units of model.
                                   (used only for persistent CD.)
-            :param q_prev: xp (batch_size, image_height_out, image_width_out)
+            :param q_prev: xp (out_channels, image_height_out, image_width_out)
             :return:
             """
+            self.clear()
             batch_size = x.data.shape[0]
             if self.pcd_flag == 0:
                 "do nothing, use x"
@@ -91,7 +92,7 @@ class ConvolutionRBM(chainer.Chain):
             # v = Variable(x)
             # vh = Variable(vh_sample.astype(xp.float32))  # vh_sample is not variable
             # vh_sample.unchain_backward()
-            vh_mean.unchain_backward()
+            vh_mean.unchain_backward()  # vh_mean is used (instead of vh_sample) for negative phase calculation
             # ph_mean.unchain_backward()
 
             '''
@@ -107,7 +108,8 @@ class ConvolutionRBM(chainer.Chain):
             # (out_channel, image_height_out, image_width_out) - average activation rate
             lambda_q = 0.9
 
-            q = lambda_q * self.q_prev + (1 - lambda_q) * F.sum(ph_mean, axis=0) / batch_size
+            #q = lambda_q * self.q_prev + (1 - lambda_q) * F.sum(ph_mean, axis=0) / batch_size
+            q = F.sum((lambda_q * self.q_prev + (1 - lambda_q) * F.sum(ph_mean, axis=0)), axis=(1, 2)) / (batch_size * ph_mean.data.shape[2] * ph_mean.data.shape[3])
             self.q_prev[:] = q.data[:]
             sparse_term = self.lambda_s * F.sum((q - self.p) * (q - self.p))  # Sparsity squared penalty
             # sparse_term = - self.lambda_s * F.sum(self.p * F.log(q) + (1 - self.p) * F.log(1 - q))
@@ -155,7 +157,7 @@ class ConvolutionRBM(chainer.Chain):
         """
         self.rbm_train = True
         self.rbm_train_debug = rbm_train_debug
-        self.count = 0  # count for debug print
+        self.count = 0  # initialize count for debug print
         self.k = k
         self.pcd_flag = pcd_flag
         self.lambda_w = lambda_w
@@ -185,63 +187,8 @@ class ConvolutionRBM(chainer.Chain):
         prev_q = xp.asarray(xp.zeros((h_mean.data.shape[1:])), dtype=xp.float32)
         self.q_prev = prev_q
 
-    def forward(self, v_data, v_prev_data=None, q_prev=None):
-        """
-
-        :param v_data:      Variable (batch_size, in_channels, image_height, image_width) - input data (training data)
-        :param v_prev_data: Variable (batch_size, in_channels, image_height, image_width)
-                            - persistent chain, hold persistent state for visible units of model.
-                              (used only for persistent CD.)
-        :param q_prev: xp (batch_size, image_height_out, image_width_out)
-        :return:
-        """
-        batch_size = v_data.data.shape[0]
-        if self.pcd_flag == 0:
-            "do nothing, use v_data"
-            # Usual CD, only v_data is used for constructing vh.
-            # h_prev_data = v_data
-            v_input = v_data
-        else:
-            # Persistent CD, only v_prev_data is used for constructing vh, except for the 1st trial
-            #v_prev_data.unchain_backward()
-            v_input = v_prev_data
-        # t1 = timeit.default_timer()
-        ph_mean, ph_sample, vh_mean, vh_sample = self.contrastive_divergence(v_input, self.k)
-        # t2 = timeit.default_timer()
-        v_prev_data.data[:] = vh_sample.data[:]  # update v_prev_data for next usage
-        # v = Variable(v_data)
-        # vh = Variable(vh_sample.astype(xp.float32))  # vh_sample is not variable
-        #vh_sample.unchain_backward()
-        vh_mean.unchain_backward()
-        #ph_mean.unchain_backward()
-
-        '''
-        http://deeplearning.net/tutorial/rbm.html eq.(5)
-        '''
-        self.loss = (self.free_energy(v_data) - self.free_energy(vh_mean)) / batch_size
-        # t3 = timeit.default_timer()
-        #print('vh_sample = ', vh_sample.data, ', shape ', vh_sample.data.shape)
-        #print('sum vh_sample = ', F.sum(vh_sample).data, ', shape ', vh_sample.data.shape)
-        """ Sparsity """
-        # (out_channel, image_height_out, image_width_out) - average activation rate
-        lambda_q = 0.9
-        q = lambda_q * q_prev + (1 - lambda_q) * F.sum(ph_mean, axis=0) / batch_size
-        q_prev[:] = q.data[:]
-        #self.loss += self.lambda_s * F.sum((q - self.p) * (q - self.p))  # Sparsity squared penalty
-        self.loss += -self.lambda_s * F.sum(self.p * F.log(q) + (1 - self.p) * F.log(1 - q))  # Sparsity log penalty
-
-        self.loss += self.lambda_w * 0.5 * F.sum(self.conv.W * self.conv.W)  # Weight decay   L2 regularization
-        #self.loss += self.lambda_w * F.sum(F.leaky_relu(self.conv.W, slope=-1.))  # Weight decay  L1 regularization
-        # t4 = timeit.default_timer()
-        # print('CRBM call: ', t2-t1, ' ', t3-t2, ' ', t4-t3)  # CRBM call:  0.00819110870361   0.00195288658142   0.000527143478394
-
-        #print('self.free_energy v_data = ', self.free_energy(v_data).data,
-        #      'self.free_energy vh_sample = ', self.free_energy(vh_sample).data,
-              #'self.loss before = ', self.loss.data,
-        #      'self.loss after sparse = ', self.loss.data)
-        #print('self.conv.a', self.conv.a.data)
-        #print('self.conv.b', self.conv.b.data)
-        return self.loss
+    def clear(self):
+        self.loss = None
 
     def free_energy(self, v):
         """
