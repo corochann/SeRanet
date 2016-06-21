@@ -22,7 +22,7 @@ if __name__ == '__main__':
 
     # Get params (Arguments)
     parser = ArgumentParser(description='SeRanet inference')
-    #parser.add_argument('input', help='input file path')
+    parser.add_argument('input', help='input file path')
     parser.add_argument('output', nargs='?', default=None,
                         help='output file path. If not specified, output image will be saved same location with input file')
     parser.add_argument('--gpu', '-g', type=int, default=-1, help='GPU ID (negative value indicates CPU)')
@@ -36,8 +36,8 @@ if __name__ == '__main__':
     filepath = os.path.dirname(os.path.realpath(__file__))
 
     #DEBUG
-    args.input = os.path.join(filepath, '../assets/compare/4/photo4_xinput.jpg')
-    args.output = os.path.join(filepath, '../assets/compare/4/seranet_v1.jpg')
+    #args.input = os.path.join(filepath, '../assets/compare/4/photo4_xinput.jpg')
+    #args.output = os.path.join(filepath, '../assets/compare/4/seranet_v1.jpg')
 
     input_file_path = args.input
     if not os.path.exists(input_file_path):
