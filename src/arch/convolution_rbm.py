@@ -108,9 +108,10 @@ class ConvolutionRBM(chainer.Chain):
             # (out_channel, image_height_out, image_width_out) - average activation rate
             lambda_q = 0.9
 
-            #q = lambda_q * self.q_prev + (1 - lambda_q) * F.sum(ph_mean, axis=0) / batch_size
-            q = F.sum((lambda_q * self.q_prev + (1 - lambda_q) * F.sum(ph_mean, axis=0)), axis=(1, 2)) / (batch_size * ph_mean.data.shape[2] * ph_mean.data.shape[3])
+            q = lambda_q * self.q_prev + (1 - lambda_q) * F.sum(ph_mean, axis=0) / batch_size
             self.q_prev[:] = q.data[:]
+            q = F.sum(q, axis=(1, 2)) / (ph_mean.data.shape[2] * ph_mean.data.shape[3])
+            # print('ph_mean shape', ph_mean.data.shape, 'q shape', q.data.shape) # ph_mean shape (20, 64, 130, 130) q shape (64,)
             sparse_term = self.lambda_s * F.sum((q - self.p) * (q - self.p))  # Sparsity squared penalty
             # sparse_term = - self.lambda_s * F.sum(self.p * F.log(q) + (1 - self.p) * F.log(1 - q))
             self.loss += sparse_term  # Sparsity log penalty
