@@ -16,7 +16,6 @@ import chainer.functions as F
 import chainer.links as L
 
 from tools.prepare_data import load_data
-from tools.image_processing import preprocess
 
 if __name__ == '__main__':
 
@@ -76,10 +75,6 @@ if __name__ == '__main__':
     arch_folder = model_arch.arch_folder
     # Directory/File setting for training log
     training_process_folder = os.path.join(arch_folder, args.color, 'training_process')
-#    if args.color == 'yonly':
-#        training_process_folder = model_arch.training_process_folder_yonly
-#    elif args.color == 'rgb':
-#        training_process_folder = model_arch.training_process_folder_rgb
 
     if not os.path.exists(training_process_folder):
         os.makedirs(training_process_folder)
@@ -105,9 +100,6 @@ if __name__ == '__main__':
     """ Preprocess """
     #print('preprocess')
     start_time = timeit.default_timer()
-    #train_scaled_x = preprocess(np_train_set_x, total_image_padding // 2)
-    #valid_scaled_x = preprocess(np_valid_set_x, total_image_padding // 2)
-    #test_scaled_x = preprocess(np_test_set_x, total_image_padding // 2)
 
     def normalize_image(np_array):
         np_array /= 255.
@@ -119,16 +111,10 @@ if __name__ == '__main__':
     normalize_image(np_train_set_y)
     normalize_image(np_valid_set_y)
     normalize_image(np_test_set_y)
-    #np_train_set_y /= 255.  # normalize
-    #np_valid_set_y /= 255.
-    #np_test_set_y /= 255.
-    #np_train_set_y = np_train_set_y.astype(np.float32)
-    #np_valid_set_y = np_valid_set_y.astype(np.float32)
-    #np_test_set_y = np_test_set_y.astype(np.float32)
 
     end_time = timeit.default_timer()
-    print('preprocess time %i sec' % (end_time - start_time))
-    print('preprocess time %i sec' % (end_time - start_time), file=train_log_file)
+    #print('preprocess time %i sec' % (end_time - start_time))
+    #print('preprocess time %i sec' % (end_time - start_time), file=train_log_file)
 
     """ SHOW Test images (0~visualize_test_img_number) """
     for i in xrange(visualize_test_img_number):
@@ -150,7 +136,11 @@ if __name__ == '__main__':
     optimizer.setup(model)
 
 
-    """ Training """
+    """
+    TRAINING
+    Early stop method is used for training to avoid overfitting,
+    Reference: https://github.com/lisa-lab/DeepLearningTutorials
+    """
     print('training')
 
     patience = 30000
@@ -178,8 +168,6 @@ if __name__ == '__main__':
                 print('training @ iter ', iteration)
             x_batch = np_train_set_x[perm[i: i + batch_size]].copy()
             y_batch = np_train_set_y[perm[i: i + batch_size]].copy()
-            #x_batch = xp.asarray(train_scaled_x[perm[i: i + batch_size]])
-            #y_batch = xp.asarray(np_train_set_y[perm[i: i + batch_size]])
             x_batch = model.preprocess_x(x_batch)
             # print('x_batch', x_batch.shape, x_batch.dtype)
 
@@ -189,13 +177,8 @@ if __name__ == '__main__':
             optimizer.update(model, x, t)
             sum_loss += float(model.loss.data) * batch_size
 
-            #optimizer.zero_grads()
-            #loss = model.forward(x, t)
-            #loss.backward()
-            #optimizer.update()
-            #sum_loss += float(loss.data) * len(y_batch)
             # end_iter_time = timeit.default_timer()
-            # print("iter took: %f sec" % (end_iter_time - start_iter_time))  # GPU -> iter took: 0.138625 sec
+            # print("iter took: %f sec" % (end_iter_time - start_iter_time))
 
         print("train mean loss: %f" % (sum_loss / n_train))
         print("train mean loss: %f" % (sum_loss / n_train), file=train_log_file)
@@ -203,8 +186,6 @@ if __name__ == '__main__':
         # Validation
         sum_loss = 0
         for i in xrange(0, n_valid, batch_size):
-            #x_batch = xp.asarray(valid_scaled_x[i:i + batch_size])
-            #y_batch = xp.asarray(np_valid_set_y[i:i + batch_size])
             x_batch = np_valid_set_x[i: i + batch_size]
             y_batch = np_valid_set_y[i: i + batch_size]
 
@@ -228,8 +209,6 @@ if __name__ == '__main__':
 
             sum_loss = 0
             for i in xrange(0, n_test, batch_size):
-                #x_batch = xp.asarray(test_scaled_x[i:i + batch_size])
-                #y_batch = xp.asarray(np_test_set_y[i:i + batch_size])
                 x_batch = np_test_set_x[i: i + batch_size]
                 y_batch = np_test_set_y[i: i + batch_size]
 
@@ -258,10 +237,7 @@ if __name__ == '__main__':
         # Check test images
         if epoch // 10 == 0 or epoch % 10 == 0:
             model.train = False
-            #x_batch = xp.asarray(test_scaled_x[0:5])
-            #y_batch = xp.asarray(np_test_set_y[0:5])
             x_batch = np_test_set_x[0:5]
-            #output = model.forward(x_batch, y_batch)
             x_batch = model.preprocess_x(x_batch)
             x = Variable(xp.asarray(x_batch, dtype=xp.float32))
             output = model(x)
@@ -271,7 +247,6 @@ if __name__ == '__main__':
             else:
                 output_data = output.data
 
-            #print('output_img0: ', output[0].transpose(1, 2, 0) * 255.)
             for photo_id in xrange(visualize_test_img_number):
                 cv2.imwrite(os.path.join(training_process_folder,
                                          'photo' + str(photo_id) + '_epoch' + str(epoch) + '.jpg'),

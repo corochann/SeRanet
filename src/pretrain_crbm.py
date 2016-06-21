@@ -21,7 +21,6 @@ import chainer.functions as F
 import chainer.links as L
 
 from tools.prepare_data import load_data
-from tools.image_processing import preprocess
 from tools.utils import tile_raster_images
 
 if __name__ == '__main__':
@@ -35,7 +34,6 @@ if __name__ == '__main__':
                         help='model selection (seranet_v1)')
     parser.add_argument('--level', '-l', type=int, default=1, help='Pretraining level')
     parser.add_argument('--batchsize', '-B', type=int, default=20, help='Learning minibatch size')
-    #parser.add_argument('--val_batchsize', '-b', type=int, default=250, help='Validation minibatch size')
     parser.add_argument('--epoch', '-E', default=1000, type=int, help='Number of max epochs to learn')
     parser.add_argument('--color', '-c', default='rgb', help='training scheme for input/output color: (yonly, rgb)')
     parser.add_argument('--pcd', '-p', default=1, type=int, help='pcd_flag')
@@ -113,9 +111,6 @@ if __name__ == '__main__':
     """ Preprocess """
     #print('preprocess')
     start_time = timeit.default_timer()
-    #train_scaled_x = preprocess(np_train_set_x, total_image_padding // 2)
-    #valid_scaled_x = preprocess(np_valid_set_x, total_image_padding // 2)
-    #test_scaled_x = preprocess(np_test_set_x, total_image_padding // 2)
 
     def normalize_image(np_array):
         np_array /= 255.
@@ -127,12 +122,6 @@ if __name__ == '__main__':
     normalize_image(np_train_set_y)
     normalize_image(np_valid_set_y)
     normalize_image(np_test_set_y)
-    #np_train_set_y /= 255.  # normalize
-    #np_valid_set_y /= 255.
-    #np_test_set_y /= 255.
-    #np_train_set_y = np_train_set_y.astype(np.float32)
-    #np_valid_set_y = np_valid_set_y.astype(np.float32)
-    #np_test_set_y = np_test_set_y.astype(np.float32)
 
     end_time = timeit.default_timer()
     print('preprocess time %i sec' % (end_time - start_time))
@@ -150,8 +139,11 @@ if __name__ == '__main__':
     # optimizer = optimizers.MomentumSGD(lr=0.0001, momentum=0.5)  # 0.0001 -> value easily explodes
     optimizer.setup(model)
 
-
-    """ Training """
+    """
+    TRAINING
+    Early stop method is used for training to avoid overfitting,
+    Reference: https://github.com/lisa-lab/DeepLearningTutorials
+    """
     print('training')
 
     patience = 30000
@@ -243,12 +235,9 @@ if __name__ == '__main__':
             print('done_looping')
             break
 
-
-
         end_time = timeit.default_timer()
         print('epoch %i took %i sec' % (epoch, end_time - start_time))
         print('epoch %i took %i sec' % (epoch, end_time - start_time), file=train_log_file)
-
 
         # Construct image from the weight matrix
         n_chains = 20
@@ -321,9 +310,7 @@ if __name__ == '__main__':
             image = Image.fromarray(image_data)
             image.save('samples_gibbs_vhv_epoch%i.png' % epoch)
 
-
     end_time = timeit.default_timer()
-
     pretraining_time = (end_time - start_time) - plotting_time
 
     print('Training took %i min %i sec' %

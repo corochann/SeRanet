@@ -15,8 +15,6 @@ from chainer import cuda, Function, gradient_check, Variable, optimizers, serial
 import chainer.functions as F
 import chainer.links as L
 
-from tools.prepare_data import load_data
-from tools.image_processing import preprocess
 
 if __name__ == '__main__':
 
@@ -24,15 +22,13 @@ if __name__ == '__main__':
 
     # Get params (Arguments)
     parser = ArgumentParser(description='SeRanet inference')
-    parser.add_argument('--input', '-i', default=None, help='input file path')
-    parser.add_argument('--output', '-o', default=None, help='output file path')
+    parser.add_argument('input', help='input file path')
+    parser.add_argument('output', naargs='?', default=None,
+                        help='output file path. If not specified, output image will be saved same location with input file')
     parser.add_argument('--gpu', '-g', type=int, default=-1, help='GPU ID (negative value indicates CPU)')
     parser.add_argument('--arch', '-a', default='seranet_v1',
-                        help='model selection (basic_cnn_tail, basic_cnn_middle, basic_cnn_head, basic_cnn_small, '
+                        help='model selection (basic_cnn_small, '
                              'seranet, seranet_v1)')
-    #parser.add_argument('--batchsize', '-B', type=int, default=5, help='Learning minibatch size')
-    #parser.add_argument('--val_batchsize', '-b', type=int, default=250, help='Validation minibatch size')
-    #parser.add_argument('--epoch', '-E', default=1000, type=int, help='Number of max epochs to learn')
     parser.add_argument('--color', '-c', default='rgb', help='application scheme for input/output color: (yonly, rgb)')
 
     args = parser.parse_args()
@@ -40,7 +36,8 @@ if __name__ == '__main__':
     filepath = os.path.dirname(os.path.realpath(__file__))
 
     #DEBUG
-    args.input = os.path.join(filepath, '../data/pexels-photo-31275-medium.jpg')
+    #args.input = os.path.join(filepath, '../data/arch/seranet_v1/rgb/training_process/photo0_xinput.jpg')
+    #args.output = os.path.join(filepath, '../data/test.jpg')
 
     input_file_path = args.input
     if not os.path.exists(input_file_path):
@@ -112,21 +109,25 @@ if __name__ == '__main__':
     if args.gpu >= 0:
         cuda.get_device(args.gpu).use()
         model.to_gpu()
+    model.train = False
 
     """ Load data """
     print('loading data')
     input_img = cv2.imread(input_file_path, cv2.IMREAD_COLOR)
-    input_img[:] = input_img[:] / 255.
+    input_img = input_img / 255.0  # Must be handled as float
 
     print('upscaling to ', output_file_path)
     if args.color == 'rgb':
         input_img = np.transpose(input_img[:, :, :], (2, 0, 1))
         input_img = input_img.reshape((1, input_img.shape[0], input_img.shape[1], input_img.shape[2]))
-
         x_data = model.preprocess_x(input_img)
-        x = Variable(xp.asarray(x_data), volatile='off')
+        x = Variable(xp.asarray(x_data), volatile='on')
         output_img = model(x)
-        output_img = output_img.transpose(1, 2, 0) * 255.
+        if (args.gpu >= 0):
+            output_data = cuda.cupy.asnumpy(output_img.data)
+        else:
+            output_data = output_img.data
+        output_img = output_data[0].transpose(1, 2, 0) * 255.
 
     elif args.color == 'yonly':
         ycc_input_img = cv2.cvtColor(input_img, cv2.COLOR_BGR2YCR_CB)
@@ -134,8 +135,12 @@ if __name__ == '__main__':
         ycc_input_img = ycc_input_img.reshape((1, ycc_input_img.shape[0], ycc_input_img.shape[1], ycc_input_img.shape[2]))
 
         x_data = model.preprocess_x(np.transpose(ycc_input_img))
-        x = Variable(xp.asarray(x_data), volatile='off')
+        x = Variable(xp.asarray(x_data), volatile='on')
         output_y_img = model(x)
+        if (args.gpu >= 0):
+            output_y_data = cuda.cupy.asnumpy(output_y_img.data)
+        else:
+            output_y_data = output_y_img.data
 
         input_image_height = input_img.shape[0]
         input_image_width = input_img.shape[1]
@@ -144,7 +149,7 @@ if __name__ == '__main__':
         scaled_input_img = cv2.resize(input_img, (output_image_width, output_image_height),
                                 interpolation=cv2.INTER_LANCZOS4)
         ycc_scaled_input_img = cv2.cvtColor(scaled_input_img, cv2.COLOR_BGR2YCR_CB)
-        ycc_scaled_input_img[:, :, 0:1] = output_y_img.transpose(1, 2, 0) * 255. # (width, height, ch)
+        ycc_scaled_input_img[:, :, 0:1] = output_y_data[0].transpose(1, 2, 0) * 255. # (width, height, ch)
         output_img = cv2.cvtColor(ycc_scaled_input_img, cv2.COLOR_YCR_CB2BGR)
 
     print('saved to ', output_file_path)

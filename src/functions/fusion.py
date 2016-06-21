@@ -1,3 +1,7 @@
+"""
+This function is DEPRECATED.
+use chainer.function.concat instead!
+"""
 from chainer import function, cuda
 from chainer.utils import type_check
 
