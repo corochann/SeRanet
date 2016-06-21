@@ -24,9 +24,9 @@ if __name__ == '__main__':
     # Get params (Arguments)
     parser = ArgumentParser(description='SeRanet training')
     parser.add_argument('--gpu', '-g', type=int, default=0, help='GPU ID (negative value indicates CPU)')
-    parser.add_argument('--arch', '-a', default='seranet_v1',
+    parser.add_argument('--arch', '-a', default='seranet_split',
                         help='model selection (basic_cnn_tail, basic_cnn_middle, basic_cnn_head, basic_cnn_small, '
-                             'seranet, seranet_v1)')
+                             'seranet_split, seranet_v1)')
     parser.add_argument('--batchsize', '-B', type=int, default=5, help='Learning minibatch size')
     #parser.add_argument('--val_batchsize', '-b', type=int, default=250, help='Validation minibatch size')
     parser.add_argument('--epoch', '-E', default=1000, type=int, help='Number of max epochs to learn')
@@ -63,9 +63,9 @@ if __name__ == '__main__':
     elif args.arch == 'basic_cnn_small':
         import arch.basic_cnn_small as model_arch
         model = model_arch.basic_cnn_small(inout_ch=inout_ch)
-    elif args.arch == 'seranet':
-        import arch.seranet as model_arch
-        model = model_arch.seranet(inout_ch=inout_ch)
+    elif args.arch == 'seranet_split':
+        import arch.seranet_split as model_arch
+        model = model_arch.seranet_split(inout_ch=inout_ch)
     elif args.arch == 'seranet_v1':
         import arch.seranet_v1 as model_arch
         model = model_arch.seranet_v1(inout_ch=inout_ch)

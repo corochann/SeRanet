@@ -22,8 +22,8 @@ if __name__ == '__main__':
 
     # Get params (Arguments)
     parser = ArgumentParser(description='SeRanet inference')
-    parser.add_argument('input', help='input file path')
-    parser.add_argument('output', naargs='?', default=None,
+    #parser.add_argument('input', help='input file path')
+    parser.add_argument('output', nargs='?', default=None,
                         help='output file path. If not specified, output image will be saved same location with input file')
     parser.add_argument('--gpu', '-g', type=int, default=-1, help='GPU ID (negative value indicates CPU)')
     parser.add_argument('--arch', '-a', default='seranet_v1',
@@ -36,8 +36,8 @@ if __name__ == '__main__':
     filepath = os.path.dirname(os.path.realpath(__file__))
 
     #DEBUG
-    #args.input = os.path.join(filepath, '../data/arch/seranet_v1/rgb/training_process/photo0_xinput.jpg')
-    #args.output = os.path.join(filepath, '../data/test.jpg')
+    args.input = os.path.join(filepath, '../assets/compare/4/photo4_xinput.jpg')
+    args.output = os.path.join(filepath, '../assets/compare/4/seranet_v1.jpg')
 
     input_file_path = args.input
     if not os.path.exists(input_file_path):
@@ -85,8 +85,8 @@ if __name__ == '__main__':
         import arch.basic_cnn_small as model_arch
         model = model_arch.basic_cnn_small(inout_ch=inout_ch)
     elif args.arch == 'seranet':
-        import arch.seranet as model_arch
-        model = model_arch.seranet(inout_ch=inout_ch)
+        import arch.seranet_split as model_arch
+        model = model_arch.seranet_split(inout_ch=inout_ch)
     elif args.arch == 'seranet_v1':
         import arch.seranet_v1 as model_arch
         model = model_arch.seranet_v1(inout_ch=inout_ch)

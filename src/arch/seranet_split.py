@@ -11,17 +11,18 @@ from convolution_rbm import ConvolutionRBM
 
 """ Configuration """
 file_path = os.path.dirname(os.path.realpath(__file__))
-arch_folder = os.path.join(file_path, '../../data/arch/seranet')
+arch_folder = os.path.join(file_path, '../../data/arch/seranet_split')
 
 total_padding = 18
 
 
-class seranet(Chain):
+class seranet_split(Chain):
     """
-    SeRanet
+    SeRanet split
+    From the beggining until the end, 4 pixel position, lu, ru, ld and rd network are independent
     """
     def __init__(self, inout_ch):
-        super(seranet, self).__init__(
+        super(seranet_split, self).__init__(
             convlu1=L.Convolution2D(in_channels=inout_ch, out_channels=32, ksize=3, stride=1),
             convru1=L.Convolution2D(in_channels=inout_ch, out_channels=32, ksize=3, stride=1),
             convld1=L.Convolution2D(in_channels=inout_ch, out_channels=32, ksize=3, stride=1),
@@ -47,23 +48,65 @@ class seranet(Chain):
             crbm3=ConvolutionRBM(64, 64, 3),
             crbm4=ConvolutionRBM(64, 96, 3),
             crbm5=ConvolutionRBM(96, 96, 3),
-            convlu6=L.Convolution2D(192, 160, 3),
-            convru6=L.Convolution2D(192, 160, 3),
-            convld6=L.Convolution2D(192, 160, 3),
-            convrd6=L.Convolution2D(192, 160, 3),
-            convlu7=L.Convolution2D(160, 128, 3),
-            convru7=L.Convolution2D(160, 128, 3),
-            convld7=L.Convolution2D(160, 128, 3),
-            convrd7=L.Convolution2D(160, 128, 3),
-            convlu8=L.Convolution2D(128, 64, 3),
-            convru8=L.Convolution2D(128, 64, 3),
-            convld8=L.Convolution2D(128, 64, 3),
-            convrd8=L.Convolution2D(128, 64, 3),
-            convlu9=L.Convolution2D(64, inout_ch, 3),
-            convru9=L.Convolution2D(64, inout_ch, 3),
-            convld9=L.Convolution2D(64, inout_ch, 3),
-            convrd9=L.Convolution2D(64, inout_ch, 3),
+            convlu6=L.Convolution2D(192, 512, 1),
+            convru6=L.Convolution2D(192, 512, 1),
+            convld6=L.Convolution2D(192, 512, 1),
+            convrd6=L.Convolution2D(192, 512, 1),
+            convlu7=L.Convolution2D(512, 192, 1),
+            convru7=L.Convolution2D(512, 192, 1),
+            convld7=L.Convolution2D(512, 192, 1),
+            convrd7=L.Convolution2D(512, 192, 1),
+            convlu8=L.Convolution2D(192, 160, 3),
+            convru8=L.Convolution2D(192, 160, 3),
+            convld8=L.Convolution2D(192, 160, 3),
+            convrd8=L.Convolution2D(192, 160, 3),
+            convlu9=L.Convolution2D(160, 128, 3),
+            convru9=L.Convolution2D(160, 128, 3),
+            convld9=L.Convolution2D(160, 128, 3),
+            convrd9=L.Convolution2D(160, 128, 3),
+            convlu10=L.Convolution2D(128, 64, 3),
+            convru10=L.Convolution2D(128, 64, 3),
+            convld10=L.Convolution2D(128, 64, 3),
+            convrd10=L.Convolution2D(128, 64, 3),
+            convlu11=L.Convolution2D(64, inout_ch, 3),
+            convru11=L.Convolution2D(64, inout_ch, 3),
+            convld11=L.Convolution2D(64, inout_ch, 3),
+            convrd11=L.Convolution2D(64, inout_ch, 3),
         )
+        # Initialization: lu, ld, lu, rd layers start from same initialW value
+        self.convru1.W.data[...] = self.convlu1.W.data[...]
+        self.convld1.W.data[...] = self.convlu1.W.data[...]
+        self.convrd1.W.data[...] = self.convlu1.W.data[...]
+        self.convru2.W.data[...] = self.convlu2.W.data[...]
+        self.convld2.W.data[...] = self.convlu2.W.data[...]
+        self.convrd2.W.data[...] = self.convlu2.W.data[...]
+        self.convru3.W.data[...] = self.convlu3.W.data[...]
+        self.convld3.W.data[...] = self.convlu3.W.data[...]
+        self.convrd3.W.data[...] = self.convlu3.W.data[...]
+        self.convru4.W.data[...] = self.convlu4.W.data[...]
+        self.convld4.W.data[...] = self.convlu4.W.data[...]
+        self.convrd4.W.data[...] = self.convlu4.W.data[...]
+        self.convru5.W.data[...] = self.convlu5.W.data[...]
+        self.convld5.W.data[...] = self.convlu5.W.data[...]
+        self.convrd5.W.data[...] = self.convlu5.W.data[...]
+        self.convru6.W.data[...] = self.convlu6.W.data[...]
+        self.convld6.W.data[...] = self.convlu6.W.data[...]
+        self.convrd6.W.data[...] = self.convlu6.W.data[...]
+        self.convru7.W.data[...] = self.convlu7.W.data[...]
+        self.convld7.W.data[...] = self.convlu7.W.data[...]
+        self.convrd7.W.data[...] = self.convlu7.W.data[...]
+        self.convru8.W.data[...] = self.convlu8.W.data[...]
+        self.convld8.W.data[...] = self.convlu8.W.data[...]
+        self.convrd8.W.data[...] = self.convlu8.W.data[...]
+        self.convru9.W.data[...] = self.convlu9.W.data[...]
+        self.convld9.W.data[...] = self.convlu9.W.data[...]
+        self.convrd9.W.data[...] = self.convlu9.W.data[...]
+        self.convru10.W.data[...] = self.convlu10.W.data[...]
+        self.convld10.W.data[...] = self.convlu10.W.data[...]
+        self.convrd10.W.data[...] = self.convlu10.W.data[...]
+        self.convru11.W.data[...] = self.convlu11.W.data[...]
+        self.convld11.W.data[...] = self.convlu11.W.data[...]
+        self.convrd11.W.data[...] = self.convlu11.W.data[...]
         self.train = True
 
     def __call__(self, x, t=None):
@@ -101,30 +144,38 @@ class seranet(Chain):
 
         # JOIN CR
 
-        lucr = CF.fusion(lu, cr)
-        rucr = CF.fusion(ru, cr)
-        ldcr = CF.fusion(ld, cr)
-        rdcr = CF.fusion(rd, cr)
+        lucr = F.concat((lu, cr), axis=1)
+        rucr = F.concat((ru, cr), axis=1)
+        ldcr = F.concat((ld, cr), axis=1)
+        rdcr = F.concat((rd, cr), axis=1)
 
         lucr = F.leaky_relu(self.convlu6(lucr), slope=0.1)
         lucr = F.leaky_relu(self.convlu7(lucr), slope=0.1)
         lucr = F.leaky_relu(self.convlu8(lucr), slope=0.1)
-        lucr = F.clipped_relu(self.convlu9(lucr), z=1.0)
+        lucr = F.leaky_relu(self.convlu9(lucr), slope=0.1)
+        lucr = F.leaky_relu(self.convlu10(lucr), slope=0.1)
+        lucr = F.clipped_relu(self.convlu11(lucr), z=1.0)
 
         rucr = F.leaky_relu(self.convru6(rucr), slope=0.1)
         rucr = F.leaky_relu(self.convru7(rucr), slope=0.1)
         rucr = F.leaky_relu(self.convru8(rucr), slope=0.1)
-        rucr = F.clipped_relu(self.convru9(rucr), z=1.0)
+        rucr = F.leaky_relu(self.convru9(rucr), slope=0.1)
+        rucr = F.leaky_relu(self.convru10(rucr), slope=0.1)
+        rucr = F.clipped_relu(self.convru11(rucr), z=1.0)
 
         ldcr = F.leaky_relu(self.convld6(ldcr), slope=0.1)
         ldcr = F.leaky_relu(self.convld7(ldcr), slope=0.1)
         ldcr = F.leaky_relu(self.convld8(ldcr), slope=0.1)
-        ldcr = F.clipped_relu(self.convld9(ldcr), z=1.0)
+        ldcr = F.leaky_relu(self.convld9(ldcr), slope=0.1)
+        ldcr = F.leaky_relu(self.convld10(ldcr), slope=0.1)
+        ldcr = F.clipped_relu(self.convld11(ldcr), z=1.0)
 
         rdcr = F.leaky_relu(self.convrd6(rdcr), slope=0.1)
         rdcr = F.leaky_relu(self.convrd7(rdcr), slope=0.1)
         rdcr = F.leaky_relu(self.convrd8(rdcr), slope=0.1)
-        rdcr = F.clipped_relu(self.convrd9(rdcr), z=1.0)
+        rdcr = F.leaky_relu(self.convrd9(rdcr), slope=0.1)
+        rdcr = F.leaky_relu(self.convrd10(rdcr), slope=0.1)
+        rdcr = F.clipped_relu(self.convrd11(rdcr), z=1.0)
 
         h = CF.splice(lucr, rucr, ldcr, rdcr)
 

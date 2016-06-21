@@ -24,14 +24,7 @@ class seranet_v1(Chain):
             conv1=L.Convolution2D(in_channels=inout_ch, out_channels=64, ksize=5, stride=1),
             conv2=L.Convolution2D(64, 64, 5),
             conv3=L.Convolution2D(64, 128, 5),
-            #conv4=L.Convolution2D(64, 64, 3),
-            #conv5=L.Convolution2D(64, 128, 3),
             seranet_v1_crbm=seranet_v1_crbm(inout_ch),
-            #crbm1=ConvolutionRBM(inout_ch, 64, 5),
-            #crbm2=ConvolutionRBM(64, 64, 5),
-            #crbm3=ConvolutionRBM(64, 128, 5),
-            #crbm4=ConvolutionRBM(64, 64, 3),
-            #crbm5=ConvolutionRBM(64, 128, 3),
             # fusion
             convlu6=L.Convolution2D(256, 512, 1),
             convru6=L.Convolution2D(256, 512, 1),
@@ -68,15 +61,8 @@ class seranet_v1(Chain):
         h1 = F.leaky_relu(self.conv1(x), slope=0.1)
         h1 = F.leaky_relu(self.conv2(h1), slope=0.1)
         h1 = F.leaky_relu(self.conv3(h1), slope=0.1)
-        #h1 = F.leaky_relu(self.conv4(h1), slope=0.1)
-        #h1 = F.leaky_relu(self.conv5(h1), slope=0.1)
 
         h2 = self.seranet_v1_crbm(x)
-        #h2 = self.crbm1(x)
-        #h2 = self.crbm2(h2)
-        #h2 = self.crbm3(h2)
-        #h2 = self.crbm4(h2)
-        #h2 = self.crbm5(h2)
         # Fusion
         h12 = F.concat((h1, h2), axis=1)
 

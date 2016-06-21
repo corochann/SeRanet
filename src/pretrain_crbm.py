@@ -64,8 +64,8 @@ if __name__ == '__main__':
     # Prepare model
     print('prepare model')
     if args.arch == 'seranet':
-        import arch.seranet as model_arch
-        model = model_arch.seranet(inout_ch=inout_ch)
+        import arch.seranet_split as model_arch
+        model = model_arch.seranet_split(inout_ch=inout_ch)
     elif args.arch == 'seranet_v1':
         import arch.seranet_v1 as model_arch
         model = model_arch.seranet_v1_crbm(inout_ch=inout_ch,
