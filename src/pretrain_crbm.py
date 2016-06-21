@@ -43,9 +43,9 @@ if __name__ == '__main__':
     #parser.add_argument('--real', '-r', default=0, type=int,
     #                    help='0: use binary unit (Bernoulli), 1: use real unit (Gaussian-Bernoulli)')
 
-    lambda_w = 5.0   # weight decay
-    p = 0.05          # sparsity rate
-    lambda_s = 0.001  # sparsity
+    lambda_w = 1.0   # weight decay
+    p = 0.05         # sparsity rate
+    lambda_s = 10.0   # sparsity
 
     args = parser.parse_args()
 
@@ -145,9 +145,9 @@ if __name__ == '__main__':
         cuda.get_device(args.gpu).use()
         model.to_gpu()
 
-    optimizer = optimizers.Adam(alpha=0.001)
-    # optimizer = optimizers.AdaDelta()
-    # optimizer = optimizers.MomentumSGD(lr=0.0001, momentum=0.9)  # 0.0001 -> value easily explodes
+    # optimizer = optimizers.Adam(alpha=0.001)
+    optimizer = optimizers.AdaDelta()
+    # optimizer = optimizers.MomentumSGD(lr=0.0001, momentum=0.5)  # 0.0001 -> value easily explodes
     optimizer.setup(model)
 
 
