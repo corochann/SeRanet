@@ -1,10 +1,11 @@
 # SeRanet
-Super Resolution of picture images using deep learning
-SeRanet project aims to study, research and develop to improve super resolution quality
+Super Resolution of picture images using deep learning.
 
 
-## Introduction
+## Demo
 SeRanet upscales picture image size to x2.
+
+\* Below sample pictures are obtained from [PEXELS](https://www.pexels.com/), providing public domain photos.
 
 Before upscale
 
@@ -12,13 +13,13 @@ Before upscale
 ![input picture2](https://raw.githubusercontent.com/corochann/SeRanet/master/assets/compare/4/photo4_xinput.jpg)
 ![input picture3](https://raw.githubusercontent.com/corochann/SeRanet/master/assets/compare/1/photo1_xinput.jpg)
 
-Upscaled image using lanczos method (with OpenCV library)
+Conventional method: image upscaled with lanczos method (with OpenCV library)
 
 ![lanczos picture1](https://raw.githubusercontent.com/corochann/SeRanet/master/assets/compare/3/lanczos.jpg)
 ![lanczos picture2](https://raw.githubusercontent.com/corochann/SeRanet/master/assets/compare/4/lanczos.jpg)
 ![lanczos picture3](https://raw.githubusercontent.com/corochann/SeRanet/master/assets/compare/1/lanczos.jpg)
 
-**Upscaled image using SeRanet**
+**SeRanet: image upscaled using seranet_v1**
 
 ![seranet_v1 picture1](https://raw.githubusercontent.com/corochann/SeRanet/master/assets/compare/3/seranet_v1.jpg)
 ![seranet_v1 picture2](https://raw.githubusercontent.com/corochann/SeRanet/master/assets/compare/4/seranet_v1.jpg)
@@ -32,11 +33,10 @@ Original image (= Ground truth data, for reference)
 
 ## Description
 
-It is developed with python on chainer framework, flexible machine learning library.
-
 SeRanet project aims to Study and Research how deep convolutional neural network works
 to learn super resolution of the image.
 
+It is developed with python on chainer framework, flexible machine learning library.
 
 ## References
 The project is inspired by following two reference
@@ -48,7 +48,8 @@ The project is inspired by following two reference
 
  - [waifu2x](https://github.com/nagadomi/waifu2x)
 
- It is the popular project for image super resolution for Anime-Style art.
+ Image super resolution for Anime-Style art and photo.
+ You can also test the application at [http://waifu2x.udp.jp/index.html](http://waifu2x.udp.jp/index.html).
 
 Machine learning library
  - [chainer](http://chainer.org/)
@@ -56,10 +57,29 @@ Machine learning library
  Machine learning library which can be written in python.
  It is open source on [github](https://github.com/pfnet/chainer)
 
+## Environment setup and requirements
+I tested the software with Ubuntu 14.04, python 2.7.
+
+Running the software requires a lot of memory, more than 8GB RAM recommended (it depends on which architecture to use).
+
+- numpy
+
+- chainer
+
+Follow [github page](https://github.com/pfnet/chainer) for installation.
+Setting up GPU (enable CUDA, cuDNN) accelerates the calculation. It is recommended to use GPU if possible.
+
+- OpenCV
+
+OpenCV is used for image processing.
+[Installation page](http://docs.opencv.org/2.4/doc/tutorials/introduction/linux_install/linux_install.html)
+
+
 ## How to use
 
 ### Basic usage
 Just specify image file path which you want to upscale.
+If you get memory error or exit code 137, please try with smaller size image.
 
 Ex. Upscaling input.jpg
 ```
@@ -124,7 +144,7 @@ python src/train.py -a model_name -g 0
 
 ## Contribution is welcome
 
-The performance of SR for this project is not matured.
+The performance of SR for this project is still not matured.
 You are welcome to suggest any improvement & contribute to this project.
 If you could get any model which performs better performance, feel free to send me a pull request!
 
