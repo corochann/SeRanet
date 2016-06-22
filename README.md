@@ -117,7 +117,7 @@ You can construct your own convolutional neural network, and train it!
 
 ###  1. Data preparation
 Put training images[1] inside data/training_images directory.
-(I used 5000 photo images during the training.)
+(I used 5000 photo images during the training, see next section "Training images".)
 
 [1]: Currently, images will be cropped to size 232 x 232 during training.
 
@@ -141,6 +141,28 @@ Once prepared training_images, see code/arch/ directory to choose which model to
 ```
 python src/train.py -a model_name -g 0
 ```
+
+
+##  Training images
+
+Training images may be more important than algorithm of deep learning to achieve high quality super resolution.
+Generally, training images dataset distributed for image classification task are not so high quality
+in terms of sharpness of the images.
+
+Therefore, I chose PEXELS photos for the training of SeRanet.
+
+ - **[PEXELS](https://www.pexels.com/)**
+
+ The website provides high quality photos under Creative Commons Zero (CC0) license.
+
+**Thanks to the pexels team and photographers**, I can re-distribute training images dataset which I used.
+It consists of 5000 medium size PEXELS photos.
+You can download from below,
+
+ - [Download PEXELS training_images](https://drive.google.com/file/d/0B_Pc4k6lTsY2b1VGLUlyTGJGS1U/view?usp=sharing)
+ (jump to google drive)
+
+After extract, copy this to data/training_images to start your own training.
 
 ## Contribution is welcome
 
