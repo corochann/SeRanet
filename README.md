@@ -160,7 +160,7 @@ It consists of 5000 medium size PEXELS photos.
 You can download from below,
 
  - [Download PEXELS training_images](https://drive.google.com/file/d/0B_Pc4k6lTsY2b1VGLUlyTGJGS1U/view?usp=sharing)
- (jump to google drive)
+ (jump to google drive, file size around 269MB)
 
 After extract, copy this to data/training_images to start your own training.
 
