@@ -98,7 +98,7 @@ if __name__ == '__main__':
     output_folder = os.path.join(arch_folder, args.color, 'output')
     if not os.path.exists(output_folder):
         os.makedirs(output_folder)
-    os.chdir(output_folder)
+    #os.chdir(output_folder)
     inference_log_file_name = 'inference.log'
     inference_log_file = open(os.path.join(output_folder, inference_log_file_name), 'w')
 
