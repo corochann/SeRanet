@@ -24,13 +24,14 @@ if __name__ == '__main__':
     # Get params (Arguments)
     parser = ArgumentParser(description='SeRanet training')
     parser.add_argument('--gpu', '-g', type=int, default=0, help='GPU ID (negative value indicates CPU)')
-    parser.add_argument('--arch', '-a', default='seranet_split',
+    parser.add_argument('--arch', '-a', default='basic_cnn_head',
                         help='model selection (basic_cnn_tail, basic_cnn_middle, basic_cnn_head, basic_cnn_small, '
                              'seranet_split, seranet_v1)')
     parser.add_argument('--batchsize', '-B', type=int, default=5, help='Learning minibatch size')
     #parser.add_argument('--val_batchsize', '-b', type=int, default=250, help='Validation minibatch size')
     parser.add_argument('--epoch', '-E', default=1000, type=int, help='Number of max epochs to learn')
     parser.add_argument('--color', '-c', default='rgb', help='training scheme for input/output color: (yonly, rgb)')
+    parser.add_argument('--size', '-s', default=64, help='image crop size for training data, maximum 232')
 
     args = parser.parse_args()
 
@@ -83,10 +84,33 @@ if __name__ == '__main__':
     train_log_file = open(os.path.join(training_process_folder, train_log_file_name), 'w')
     #total_image_padding = 14 #24 #18 #14
 
+    print("""-------- training parameter --------
+    GPU ID        : %d
+    archtecture   : %s
+    batch size    : %d
+    epoch         : %d
+    color scheme  : %s
+    size          : %d
+    ------------------------------------
+    """ % (args.gpu, args.arch, args.batchsize, args.epoch, args.color, args.size))
+    print("""-------- training parameter --------
+    GPU ID        : %d
+    archtecture   : %s
+    batch size    : %d
+    epoch         : %d
+    color scheme  : %s
+    size          : %d
+    ------------------------------------
+    """ % (args.gpu, args.arch, args.batchsize, args.epoch, args.color, args.size), file=train_log_file)
+
     """ Load data """
     print('loading data')
 
-    datasets = load_data(mode=args.color)
+    """
+    Changing crop_size to smaller value makes training speed faster
+    crop_size=30 for easy demo, 64 for default value, maximum 232
+    """
+    datasets = load_data(mode=args.color, crop_size=args.size)
 
     np_train_dataset, np_valid_dataset, np_test_dataset = datasets
     np_train_set_x, np_train_set_y = np_train_dataset
@@ -145,7 +169,7 @@ if __name__ == '__main__':
 
     patience = 30000
     patience_increase = 2
-    improvement_threshold = 0.995  # 0.997
+    improvement_threshold = 0.997 # 0.995
 
     validation_frequency = min(n_train, patience // 2) * 2
 

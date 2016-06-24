@@ -9,7 +9,10 @@ import os
 import cv2
 import numpy as np
 
+
 """ definitions """
+default_crop_size = 232
+
 filepath = os.path.dirname(os.path.realpath(__file__))
 input_directory = os.path.join(filepath, '../../data/training_images')
 cropped_directory = os.path.join(filepath, '../../data/training_images-232-cropped')
@@ -17,7 +20,7 @@ half_directory = os.path.join(filepath, '../../data/training_images-116-cropped'
 logfile_name = os.path.join(filepath, '../../data/prepare_data.log')
 
 
-def build_data(crop_size=232, image_save_flag=False, mode='yonly', remove_flag=False):
+def build_data(crop_size=default_crop_size, image_save_flag=False, mode='yonly', remove_flag=False):
     """
 
     :param crop_size: output size for training images, input size will be crop_size // 2
@@ -164,8 +167,8 @@ def format_data(dataset):
             (np_valid_data_x, np_valid_data_y),
             (np_test_data_x, np_test_data_y)]
 
-def load_data(mode='yonly'):
-    dataset = build_data(mode=mode)
+def load_data(mode='yonly', crop_size=default_crop_size):
+    dataset = build_data(mode=mode, crop_size=crop_size)
     return format_data(dataset)
 
 
