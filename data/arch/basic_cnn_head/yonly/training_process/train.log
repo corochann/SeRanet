@@ -1,0 +1,1051 @@
+-------- training parameter --------
+GPU ID        : 0
+archtecture   : basic_cnn_head
+batch size    : 5
+epoch         : 1000
+color scheme  : yonly
+size          : 64
+------------------------------------
+
+train mean loss: 0.017176
+valid mean loss: 0.002418
+  epoch 1, test cost of best model 0.002542
+epoch 1 took 11 sec
+train mean loss: 0.002045
+valid mean loss: 0.001622
+  epoch 2, test cost of best model 0.001740
+epoch 2 took 11 sec
+train mean loss: 0.001697
+valid mean loss: 0.001522
+  epoch 3, test cost of best model 0.001644
+epoch 3 took 11 sec
+train mean loss: 0.001654
+valid mean loss: 0.001517
+  epoch 4, test cost of best model 0.001639
+epoch 4 took 11 sec
+train mean loss: 0.001618
+valid mean loss: 0.001470
+  epoch 5, test cost of best model 0.001594
+epoch 5 took 11 sec
+train mean loss: 0.001601
+valid mean loss: 0.001454
+  epoch 6, test cost of best model 0.001578
+epoch 6 took 11 sec
+train mean loss: 0.001605
+valid mean loss: 0.001439
+  epoch 7, test cost of best model 0.001564
+epoch 7 took 11 sec
+train mean loss: 0.001587
+valid mean loss: 0.001436
+  epoch 8, test cost of best model 0.001561
+epoch 8 took 11 sec
+train mean loss: 0.001584
+valid mean loss: 0.001417
+  epoch 9, test cost of best model 0.001542
+epoch 9 took 11 sec
+train mean loss: 0.001551
+valid mean loss: 0.001405
+  epoch 10, test cost of best model 0.001531
+epoch 10 took 11 sec
+train mean loss: 0.001568
+valid mean loss: 0.001396
+  epoch 11, test cost of best model 0.001523
+epoch 11 took 11 sec
+train mean loss: 0.001522
+valid mean loss: 0.001393
+  epoch 12, test cost of best model 0.001518
+epoch 12 took 11 sec
+train mean loss: 0.001530
+valid mean loss: 0.001415
+epoch 13 took 11 sec
+train mean loss: 0.001527
+valid mean loss: 0.001381
+  epoch 14, test cost of best model 0.001505
+epoch 14 took 11 sec
+train mean loss: 0.001509
+valid mean loss: 0.001386
+epoch 15 took 11 sec
+train mean loss: 0.001505
+valid mean loss: 0.001360
+  epoch 16, test cost of best model 0.001485
+epoch 16 took 11 sec
+train mean loss: 0.001496
+valid mean loss: 0.001364
+epoch 17 took 11 sec
+train mean loss: 0.001487
+valid mean loss: 0.001362
+epoch 18 took 11 sec
+train mean loss: 0.001491
+valid mean loss: 0.001352
+  epoch 19, test cost of best model 0.001475
+epoch 19 took 11 sec
+train mean loss: 0.001504
+valid mean loss: 0.001345
+  epoch 20, test cost of best model 0.001468
+epoch 20 took 11 sec
+train mean loss: 0.001475
+valid mean loss: 0.001346
+epoch 21 took 11 sec
+train mean loss: 0.001476
+valid mean loss: 0.001342
+  epoch 22, test cost of best model 0.001467
+epoch 22 took 11 sec
+train mean loss: 0.001468
+valid mean loss: 0.001384
+epoch 23 took 11 sec
+train mean loss: 0.001475
+valid mean loss: 0.001337
+  epoch 24, test cost of best model 0.001461
+epoch 24 took 11 sec
+train mean loss: 0.001465
+valid mean loss: 0.001329
+  epoch 25, test cost of best model 0.001454
+epoch 25 took 11 sec
+train mean loss: 0.001476
+valid mean loss: 0.001330
+epoch 26 took 11 sec
+train mean loss: 0.001447
+valid mean loss: 0.001334
+epoch 27 took 11 sec
+train mean loss: 0.001461
+valid mean loss: 0.001333
+epoch 28 took 11 sec
+train mean loss: 0.001443
+valid mean loss: 0.001317
+  epoch 29, test cost of best model 0.001441
+epoch 29 took 11 sec
+train mean loss: 0.001463
+valid mean loss: 0.001374
+epoch 30 took 11 sec
+train mean loss: 0.001438
+valid mean loss: 0.001317
+epoch 31 took 11 sec
+train mean loss: 0.001449
+valid mean loss: 0.001317
+epoch 32 took 11 sec
+train mean loss: 0.001435
+valid mean loss: 0.001362
+epoch 33 took 11 sec
+train mean loss: 0.001440
+valid mean loss: 0.001312
+  epoch 34, test cost of best model 0.001438
+epoch 34 took 11 sec
+train mean loss: 0.001440
+valid mean loss: 0.001315
+epoch 35 took 11 sec
+train mean loss: 0.001431
+valid mean loss: 0.001367
+epoch 36 took 11 sec
+train mean loss: 0.001433
+valid mean loss: 0.001310
+  epoch 37, test cost of best model 0.001434
+epoch 37 took 11 sec
+train mean loss: 0.001439
+valid mean loss: 0.001299
+  epoch 38, test cost of best model 0.001424
+epoch 38 took 12 sec
+train mean loss: 0.001426
+valid mean loss: 0.001298
+  epoch 39, test cost of best model 0.001423
+epoch 39 took 11 sec
+train mean loss: 0.001423
+valid mean loss: 0.001297
+  epoch 40, test cost of best model 0.001423
+epoch 40 took 12 sec
+train mean loss: 0.001431
+valid mean loss: 0.001378
+epoch 41 took 11 sec
+train mean loss: 0.001419
+valid mean loss: 0.001321
+epoch 42 took 11 sec
+train mean loss: 0.001422
+valid mean loss: 0.001292
+  epoch 43, test cost of best model 0.001418
+epoch 43 took 11 sec
+train mean loss: 0.001412
+valid mean loss: 0.001300
+epoch 44 took 11 sec
+train mean loss: 0.001424
+valid mean loss: 0.001288
+  epoch 45, test cost of best model 0.001414
+epoch 45 took 12 sec
+train mean loss: 0.001408
+valid mean loss: 0.001303
+epoch 46 took 11 sec
+train mean loss: 0.001450
+valid mean loss: 0.001288
+  epoch 47, test cost of best model 0.001412
+epoch 47 took 12 sec
+train mean loss: 0.001404
+valid mean loss: 0.001287
+  epoch 48, test cost of best model 0.001411
+epoch 48 took 11 sec
+train mean loss: 0.001428
+valid mean loss: 0.001367
+epoch 49 took 11 sec
+train mean loss: 0.001403
+valid mean loss: 0.001287
+  epoch 50, test cost of best model 0.001415
+epoch 50 took 12 sec
+train mean loss: 0.001401
+valid mean loss: 0.001294
+epoch 51 took 11 sec
+train mean loss: 0.001402
+valid mean loss: 0.001289
+epoch 52 took 11 sec
+train mean loss: 0.001417
+valid mean loss: 0.001288
+epoch 53 took 11 sec
+train mean loss: 0.001397
+valid mean loss: 0.001287
+  epoch 54, test cost of best model 0.001412
+epoch 54 took 12 sec
+train mean loss: 0.001396
+valid mean loss: 0.001282
+  epoch 55, test cost of best model 0.001408
+epoch 55 took 12 sec
+train mean loss: 0.001404
+valid mean loss: 0.001276
+  epoch 56, test cost of best model 0.001401
+epoch 56 took 12 sec
+train mean loss: 0.001409
+valid mean loss: 0.001273
+  epoch 57, test cost of best model 0.001398
+epoch 57 took 11 sec
+train mean loss: 0.001398
+valid mean loss: 0.001270
+  epoch 58, test cost of best model 0.001394
+epoch 58 took 12 sec
+train mean loss: 0.001390
+valid mean loss: 0.001346
+epoch 59 took 11 sec
+train mean loss: 0.001395
+valid mean loss: 0.001279
+epoch 60 took 11 sec
+train mean loss: 0.001399
+valid mean loss: 0.001273
+epoch 61 took 11 sec
+train mean loss: 0.001388
+valid mean loss: 0.001276
+epoch 62 took 11 sec
+train mean loss: 0.001401
+valid mean loss: 0.001264
+  epoch 63, test cost of best model 0.001389
+epoch 63 took 12 sec
+train mean loss: 0.001384
+valid mean loss: 0.001267
+epoch 64 took 11 sec
+train mean loss: 0.001397
+valid mean loss: 0.001276
+epoch 65 took 11 sec
+train mean loss: 0.001383
+valid mean loss: 0.001281
+epoch 66 took 11 sec
+train mean loss: 0.001388
+valid mean loss: 0.001324
+epoch 67 took 11 sec
+train mean loss: 0.001383
+valid mean loss: 0.001268
+epoch 68 took 11 sec
+train mean loss: 0.001380
+valid mean loss: 0.001287
+epoch 69 took 11 sec
+train mean loss: 0.001381
+valid mean loss: 0.001262
+  epoch 70, test cost of best model 0.001385
+epoch 70 took 12 sec
+train mean loss: 0.001385
+valid mean loss: 0.001263
+epoch 71 took 11 sec
+train mean loss: 0.001377
+valid mean loss: 0.001267
+epoch 72 took 11 sec
+train mean loss: 0.001378
+valid mean loss: 0.001263
+epoch 73 took 11 sec
+train mean loss: 0.001386
+valid mean loss: 0.001259
+  epoch 74, test cost of best model 0.001382
+epoch 74 took 12 sec
+train mean loss: 0.001369
+valid mean loss: 0.001277
+epoch 75 took 11 sec
+train mean loss: 0.001389
+valid mean loss: 0.001264
+epoch 76 took 11 sec
+train mean loss: 0.001379
+valid mean loss: 0.001268
+epoch 77 took 11 sec
+train mean loss: 0.001366
+valid mean loss: 0.001391
+epoch 78 took 11 sec
+train mean loss: 0.001374
+valid mean loss: 0.001260
+epoch 79 took 11 sec
+train mean loss: 0.001372
+valid mean loss: 0.001299
+epoch 80 took 11 sec
+train mean loss: 0.001368
+valid mean loss: 0.001259
+  epoch 81, test cost of best model 0.001381
+epoch 81 took 12 sec
+train mean loss: 0.001366
+valid mean loss: 0.001259
+  epoch 82, test cost of best model 0.001382
+epoch 82 took 12 sec
+train mean loss: 0.001383
+valid mean loss: 0.001259
+epoch 83 took 11 sec
+train mean loss: 0.001360
+valid mean loss: 0.001258
+  epoch 84, test cost of best model 0.001380
+epoch 84 took 12 sec
+train mean loss: 0.001368
+valid mean loss: 0.001255
+  epoch 85, test cost of best model 0.001376
+epoch 85 took 12 sec
+train mean loss: 0.001360
+valid mean loss: 0.001282
+epoch 86 took 11 sec
+train mean loss: 0.001377
+valid mean loss: 0.001247
+  epoch 87, test cost of best model 0.001368
+epoch 87 took 12 sec
+train mean loss: 0.001360
+valid mean loss: 0.001249
+epoch 88 took 11 sec
+train mean loss: 0.001364
+valid mean loss: 0.001277
+epoch 89 took 11 sec
+train mean loss: 0.001358
+valid mean loss: 0.001255
+epoch 90 took 11 sec
+train mean loss: 0.001367
+valid mean loss: 0.001253
+epoch 91 took 11 sec
+train mean loss: 0.001361
+valid mean loss: 0.001257
+epoch 92 took 11 sec
+train mean loss: 0.001353
+valid mean loss: 0.001246
+  epoch 93, test cost of best model 0.001368
+epoch 93 took 12 sec
+train mean loss: 0.001369
+valid mean loss: 0.001246
+epoch 94 took 11 sec
+train mean loss: 0.001355
+valid mean loss: 0.001298
+epoch 95 took 11 sec
+train mean loss: 0.001353
+valid mean loss: 0.001248
+epoch 96 took 11 sec
+train mean loss: 0.001352
+valid mean loss: 0.001252
+epoch 97 took 11 sec
+train mean loss: 0.001361
+valid mean loss: 0.001249
+epoch 98 took 11 sec
+train mean loss: 0.001347
+valid mean loss: 0.001254
+epoch 99 took 11 sec
+train mean loss: 0.001349
+valid mean loss: 0.001250
+epoch 100 took 11 sec
+train mean loss: 0.001352
+valid mean loss: 0.001257
+epoch 101 took 11 sec
+train mean loss: 0.001350
+valid mean loss: 0.001255
+epoch 102 took 11 sec
+train mean loss: 0.001345
+valid mean loss: 0.001251
+epoch 103 took 11 sec
+train mean loss: 0.001353
+valid mean loss: 0.001244
+  epoch 104, test cost of best model 0.001362
+epoch 104 took 12 sec
+train mean loss: 0.001347
+valid mean loss: 0.001239
+  epoch 105, test cost of best model 0.001360
+epoch 105 took 12 sec
+train mean loss: 0.001347
+valid mean loss: 0.001243
+epoch 106 took 11 sec
+train mean loss: 0.001350
+valid mean loss: 0.001249
+epoch 107 took 11 sec
+train mean loss: 0.001343
+valid mean loss: 0.001243
+epoch 108 took 11 sec
+train mean loss: 0.001344
+valid mean loss: 0.001273
+epoch 109 took 11 sec
+train mean loss: 0.001345
+valid mean loss: 0.001243
+epoch 110 took 11 sec
+train mean loss: 0.001340
+valid mean loss: 0.001253
+epoch 111 took 11 sec
+train mean loss: 0.001354
+valid mean loss: 0.001239
+  epoch 112, test cost of best model 0.001359
+epoch 112 took 12 sec
+train mean loss: 0.001338
+valid mean loss: 0.001234
+  epoch 113, test cost of best model 0.001352
+epoch 113 took 12 sec
+train mean loss: 0.001338
+valid mean loss: 0.001238
+epoch 114 took 11 sec
+train mean loss: 0.001338
+valid mean loss: 0.001235
+epoch 115 took 11 sec
+train mean loss: 0.001349
+valid mean loss: 0.001240
+epoch 116 took 11 sec
+train mean loss: 0.001333
+valid mean loss: 0.001241
+epoch 117 took 11 sec
+train mean loss: 0.001342
+valid mean loss: 0.001237
+epoch 118 took 11 sec
+train mean loss: 0.001336
+valid mean loss: 0.001251
+epoch 119 took 11 sec
+train mean loss: 0.001333
+valid mean loss: 0.001236
+epoch 120 took 11 sec
+train mean loss: 0.001339
+valid mean loss: 0.001236
+epoch 121 took 11 sec
+train mean loss: 0.001336
+valid mean loss: 0.001234
+epoch 122 took 11 sec
+train mean loss: 0.001333
+valid mean loss: 0.001236
+epoch 123 took 11 sec
+train mean loss: 0.001331
+valid mean loss: 0.001235
+epoch 124 took 11 sec
+train mean loss: 0.001337
+valid mean loss: 0.001239
+epoch 125 took 11 sec
+train mean loss: 0.001329
+valid mean loss: 0.001274
+epoch 126 took 11 sec
+train mean loss: 0.001333
+valid mean loss: 0.001262
+epoch 127 took 11 sec
+train mean loss: 0.001326
+valid mean loss: 0.001238
+epoch 128 took 11 sec
+train mean loss: 0.001331
+valid mean loss: 0.001230
+  epoch 129, test cost of best model 0.001348
+epoch 129 took 12 sec
+train mean loss: 0.001333
+valid mean loss: 0.001242
+epoch 130 took 11 sec
+train mean loss: 0.001324
+valid mean loss: 0.001237
+epoch 131 took 11 sec
+train mean loss: 0.001336
+valid mean loss: 0.001236
+epoch 132 took 11 sec
+train mean loss: 0.001323
+valid mean loss: 0.001235
+epoch 133 took 11 sec
+train mean loss: 0.001324
+valid mean loss: 0.001230
+epoch 134 took 11 sec
+train mean loss: 0.001329
+valid mean loss: 0.001241
+epoch 135 took 11 sec
+train mean loss: 0.001321
+valid mean loss: 0.001227
+  epoch 136, test cost of best model 0.001344
+epoch 136 took 12 sec
+train mean loss: 0.001326
+valid mean loss: 0.001233
+epoch 137 took 11 sec
+train mean loss: 0.001324
+valid mean loss: 0.001228
+epoch 138 took 11 sec
+train mean loss: 0.001329
+valid mean loss: 0.001230
+epoch 139 took 11 sec
+train mean loss: 0.001321
+valid mean loss: 0.001234
+epoch 140 took 11 sec
+train mean loss: 0.001324
+valid mean loss: 0.001251
+epoch 141 took 11 sec
+train mean loss: 0.001321
+valid mean loss: 0.001231
+epoch 142 took 11 sec
+train mean loss: 0.001319
+valid mean loss: 0.001231
+epoch 143 took 11 sec
+train mean loss: 0.001321
+valid mean loss: 0.001237
+epoch 144 took 11 sec
+train mean loss: 0.001317
+valid mean loss: 0.001238
+epoch 145 took 11 sec
+train mean loss: 0.001319
+valid mean loss: 0.001244
+epoch 146 took 11 sec
+train mean loss: 0.001317
+valid mean loss: 0.001227
+  epoch 147, test cost of best model 0.001348
+epoch 147 took 12 sec
+train mean loss: 0.001319
+valid mean loss: 0.001232
+epoch 148 took 11 sec
+train mean loss: 0.001314
+valid mean loss: 0.001254
+epoch 149 took 11 sec
+train mean loss: 0.001320
+valid mean loss: 0.001248
+epoch 150 took 11 sec
+train mean loss: 0.001319
+valid mean loss: 0.001241
+epoch 151 took 11 sec
+train mean loss: 0.001311
+valid mean loss: 0.001239
+epoch 152 took 11 sec
+train mean loss: 0.001318
+valid mean loss: 0.001269
+epoch 153 took 11 sec
+train mean loss: 0.001318
+valid mean loss: 0.001230
+epoch 154 took 11 sec
+train mean loss: 0.001312
+valid mean loss: 0.001229
+epoch 155 took 11 sec
+train mean loss: 0.001317
+valid mean loss: 0.001230
+epoch 156 took 11 sec
+train mean loss: 0.001311
+valid mean loss: 0.001233
+epoch 157 took 11 sec
+train mean loss: 0.001310
+valid mean loss: 0.001229
+epoch 158 took 11 sec
+train mean loss: 0.001315
+valid mean loss: 0.001229
+epoch 159 took 11 sec
+train mean loss: 0.001307
+valid mean loss: 0.001229
+epoch 160 took 11 sec
+train mean loss: 0.001313
+valid mean loss: 0.001226
+  epoch 161, test cost of best model 0.001345
+epoch 161 took 11 sec
+train mean loss: 0.001309
+valid mean loss: 0.001232
+epoch 162 took 11 sec
+train mean loss: 0.001308
+valid mean loss: 0.001226
+  epoch 163, test cost of best model 0.001343
+epoch 163 took 12 sec
+train mean loss: 0.001307
+valid mean loss: 0.001222
+  epoch 164, test cost of best model 0.001340
+epoch 164 took 12 sec
+train mean loss: 0.001315
+valid mean loss: 0.001224
+epoch 165 took 11 sec
+train mean loss: 0.001323
+valid mean loss: 0.001227
+epoch 166 took 11 sec
+train mean loss: 0.001300
+valid mean loss: 0.001231
+epoch 167 took 11 sec
+train mean loss: 0.001301
+valid mean loss: 0.001227
+epoch 168 took 11 sec
+train mean loss: 0.001305
+valid mean loss: 0.001229
+epoch 169 took 11 sec
+train mean loss: 0.001307
+valid mean loss: 0.001249
+epoch 170 took 11 sec
+train mean loss: 0.001302
+valid mean loss: 0.001235
+epoch 171 took 11 sec
+train mean loss: 0.001307
+valid mean loss: 0.001231
+epoch 172 took 11 sec
+train mean loss: 0.001299
+valid mean loss: 0.001232
+epoch 173 took 11 sec
+train mean loss: 0.001310
+valid mean loss: 0.001228
+epoch 174 took 11 sec
+train mean loss: 0.001303
+valid mean loss: 0.001220
+  epoch 175, test cost of best model 0.001336
+epoch 175 took 12 sec
+train mean loss: 0.001299
+valid mean loss: 0.001232
+epoch 176 took 11 sec
+train mean loss: 0.001301
+valid mean loss: 0.001229
+epoch 177 took 11 sec
+train mean loss: 0.001300
+valid mean loss: 0.001234
+epoch 178 took 11 sec
+train mean loss: 0.001301
+valid mean loss: 0.001228
+epoch 179 took 11 sec
+train mean loss: 0.001296
+valid mean loss: 0.001221
+epoch 180 took 11 sec
+train mean loss: 0.001301
+valid mean loss: 0.001231
+epoch 181 took 11 sec
+train mean loss: 0.001294
+valid mean loss: 0.001223
+epoch 182 took 11 sec
+train mean loss: 0.001304
+valid mean loss: 0.001244
+epoch 183 took 11 sec
+train mean loss: 0.001295
+valid mean loss: 0.001221
+epoch 184 took 11 sec
+train mean loss: 0.001297
+valid mean loss: 0.001234
+epoch 185 took 11 sec
+train mean loss: 0.001293
+valid mean loss: 0.001231
+epoch 186 took 11 sec
+train mean loss: 0.001297
+valid mean loss: 0.001241
+epoch 187 took 11 sec
+train mean loss: 0.001292
+valid mean loss: 0.001227
+epoch 188 took 11 sec
+train mean loss: 0.001297
+valid mean loss: 0.001217
+  epoch 189, test cost of best model 0.001338
+epoch 189 took 11 sec
+train mean loss: 0.001295
+valid mean loss: 0.001225
+epoch 190 took 11 sec
+train mean loss: 0.001291
+valid mean loss: 0.001227
+epoch 191 took 11 sec
+train mean loss: 0.001293
+valid mean loss: 0.001223
+epoch 192 took 11 sec
+train mean loss: 0.001289
+valid mean loss: 0.001229
+epoch 193 took 11 sec
+train mean loss: 0.001290
+valid mean loss: 0.001221
+epoch 194 took 11 sec
+train mean loss: 0.001298
+valid mean loss: 0.001223
+epoch 195 took 11 sec
+train mean loss: 0.001285
+valid mean loss: 0.001228
+epoch 196 took 11 sec
+train mean loss: 0.001292
+valid mean loss: 0.001221
+epoch 197 took 11 sec
+train mean loss: 0.001287
+valid mean loss: 0.001221
+epoch 198 took 11 sec
+train mean loss: 0.001287
+valid mean loss: 0.001302
+epoch 199 took 11 sec
+train mean loss: 0.001291
+valid mean loss: 0.001227
+epoch 200 took 11 sec
+train mean loss: 0.001291
+valid mean loss: 0.001224
+epoch 201 took 11 sec
+train mean loss: 0.001282
+valid mean loss: 0.001227
+epoch 202 took 11 sec
+train mean loss: 0.001284
+valid mean loss: 0.001232
+epoch 203 took 12 sec
+train mean loss: 0.001290
+valid mean loss: 0.001218
+epoch 204 took 11 sec
+train mean loss: 0.001281
+valid mean loss: 0.001221
+epoch 205 took 11 sec
+train mean loss: 0.001287
+valid mean loss: 0.001224
+epoch 206 took 11 sec
+train mean loss: 0.001280
+valid mean loss: 0.001221
+epoch 207 took 11 sec
+train mean loss: 0.001296
+valid mean loss: 0.001227
+epoch 208 took 11 sec
+train mean loss: 0.001279
+valid mean loss: 0.001219
+epoch 209 took 11 sec
+train mean loss: 0.001281
+valid mean loss: 0.001221
+epoch 210 took 11 sec
+train mean loss: 0.001281
+valid mean loss: 0.001239
+epoch 211 took 11 sec
+train mean loss: 0.001280
+valid mean loss: 0.001234
+epoch 212 took 11 sec
+train mean loss: 0.001281
+valid mean loss: 0.001229
+epoch 213 took 11 sec
+train mean loss: 0.001281
+valid mean loss: 0.001252
+epoch 214 took 11 sec
+train mean loss: 0.001275
+valid mean loss: 0.001226
+epoch 215 took 11 sec
+train mean loss: 0.001287
+valid mean loss: 0.001219
+epoch 216 took 11 sec
+train mean loss: 0.001275
+valid mean loss: 0.001225
+epoch 217 took 11 sec
+train mean loss: 0.001276
+valid mean loss: 0.001219
+epoch 218 took 11 sec
+train mean loss: 0.001278
+valid mean loss: 0.001232
+epoch 219 took 11 sec
+train mean loss: 0.001274
+valid mean loss: 0.001231
+epoch 220 took 11 sec
+train mean loss: 0.001276
+valid mean loss: 0.001230
+epoch 221 took 11 sec
+train mean loss: 0.001274
+valid mean loss: 0.001218
+epoch 222 took 11 sec
+train mean loss: 0.001278
+valid mean loss: 0.001242
+epoch 223 took 11 sec
+train mean loss: 0.001274
+valid mean loss: 0.001337
+epoch 224 took 11 sec
+train mean loss: 0.001277
+valid mean loss: 0.001227
+epoch 225 took 11 sec
+train mean loss: 0.001269
+valid mean loss: 0.001224
+epoch 226 took 11 sec
+train mean loss: 0.001274
+valid mean loss: 0.001226
+epoch 227 took 11 sec
+train mean loss: 0.001275
+valid mean loss: 0.001239
+epoch 228 took 11 sec
+train mean loss: 0.001267
+valid mean loss: 0.001230
+epoch 229 took 11 sec
+train mean loss: 0.001273
+valid mean loss: 0.001219
+epoch 230 took 11 sec
+train mean loss: 0.001284
+valid mean loss: 0.001232
+epoch 231 took 11 sec
+train mean loss: 0.001263
+valid mean loss: 0.001223
+epoch 232 took 11 sec
+train mean loss: 0.001265
+valid mean loss: 0.001233
+epoch 233 took 11 sec
+train mean loss: 0.001270
+valid mean loss: 0.001224
+epoch 234 took 11 sec
+train mean loss: 0.001268
+valid mean loss: 0.001225
+epoch 235 took 11 sec
+train mean loss: 0.001267
+valid mean loss: 0.001223
+epoch 236 took 11 sec
+train mean loss: 0.001266
+valid mean loss: 0.001228
+epoch 237 took 11 sec
+train mean loss: 0.001263
+valid mean loss: 0.001241
+epoch 238 took 11 sec
+train mean loss: 0.001265
+valid mean loss: 0.001233
+epoch 239 took 11 sec
+train mean loss: 0.001265
+valid mean loss: 0.001226
+epoch 240 took 11 sec
+train mean loss: 0.001263
+valid mean loss: 0.001218
+epoch 241 took 11 sec
+train mean loss: 0.001272
+valid mean loss: 0.001217
+  epoch 242, test cost of best model 0.001334
+epoch 242 took 12 sec
+train mean loss: 0.001264
+valid mean loss: 0.001223
+epoch 243 took 11 sec
+train mean loss: 0.001259
+valid mean loss: 0.001224
+epoch 244 took 11 sec
+train mean loss: 0.001267
+valid mean loss: 0.001223
+epoch 245 took 11 sec
+train mean loss: 0.001259
+valid mean loss: 0.001247
+epoch 246 took 11 sec
+train mean loss: 0.001258
+valid mean loss: 0.001228
+epoch 247 took 11 sec
+train mean loss: 0.001257
+valid mean loss: 0.001221
+epoch 248 took 11 sec
+train mean loss: 0.001260
+valid mean loss: 0.001235
+epoch 249 took 11 sec
+train mean loss: 0.001260
+valid mean loss: 0.001225
+epoch 250 took 12 sec
+train mean loss: 0.001265
+valid mean loss: 0.001233
+epoch 251 took 11 sec
+train mean loss: 0.001252
+valid mean loss: 0.001227
+epoch 252 took 11 sec
+train mean loss: 0.001262
+valid mean loss: 0.001247
+epoch 253 took 11 sec
+train mean loss: 0.001255
+valid mean loss: 0.001236
+epoch 254 took 11 sec
+train mean loss: 0.001255
+valid mean loss: 0.001232
+epoch 255 took 11 sec
+train mean loss: 0.001253
+valid mean loss: 0.001225
+epoch 256 took 11 sec
+train mean loss: 0.001254
+valid mean loss: 0.001228
+epoch 257 took 11 sec
+train mean loss: 0.001252
+valid mean loss: 0.001219
+epoch 258 took 11 sec
+train mean loss: 0.001255
+valid mean loss: 0.001230
+epoch 259 took 11 sec
+train mean loss: 0.001254
+valid mean loss: 0.001216
+  epoch 260, test cost of best model 0.001332
+epoch 260 took 11 sec
+train mean loss: 0.001250
+valid mean loss: 0.001233
+epoch 261 took 11 sec
+train mean loss: 0.001252
+valid mean loss: 0.001220
+epoch 262 took 11 sec
+train mean loss: 0.001249
+valid mean loss: 0.001220
+epoch 263 took 12 sec
+train mean loss: 0.001256
+valid mean loss: 0.001226
+epoch 264 took 11 sec
+train mean loss: 0.001245
+valid mean loss: 0.001231
+epoch 265 took 12 sec
+train mean loss: 0.001248
+valid mean loss: 0.001233
+epoch 266 took 11 sec
+train mean loss: 0.001248
+valid mean loss: 0.001228
+epoch 267 took 11 sec
+train mean loss: 0.001246
+valid mean loss: 0.001223
+epoch 268 took 11 sec
+train mean loss: 0.001250
+valid mean loss: 0.001226
+epoch 269 took 11 sec
+train mean loss: 0.001247
+valid mean loss: 0.001218
+epoch 270 took 11 sec
+train mean loss: 0.001248
+valid mean loss: 0.001226
+epoch 271 took 11 sec
+train mean loss: 0.001245
+valid mean loss: 0.001234
+epoch 272 took 11 sec
+train mean loss: 0.001247
+valid mean loss: 0.001232
+epoch 273 took 11 sec
+train mean loss: 0.001243
+valid mean loss: 0.001223
+epoch 274 took 11 sec
+train mean loss: 0.001244
+valid mean loss: 0.001221
+epoch 275 took 12 sec
+train mean loss: 0.001244
+valid mean loss: 0.001224
+epoch 276 took 11 sec
+train mean loss: 0.001242
+valid mean loss: 0.001222
+epoch 277 took 11 sec
+train mean loss: 0.001242
+valid mean loss: 0.001234
+epoch 278 took 11 sec
+train mean loss: 0.001239
+valid mean loss: 0.001235
+epoch 279 took 11 sec
+train mean loss: 0.001241
+valid mean loss: 0.001227
+epoch 280 took 11 sec
+train mean loss: 0.001240
+valid mean loss: 0.001230
+epoch 281 took 11 sec
+train mean loss: 0.001244
+valid mean loss: 0.001222
+epoch 282 took 11 sec
+train mean loss: 0.001241
+valid mean loss: 0.001247
+epoch 283 took 12 sec
+train mean loss: 0.001244
+valid mean loss: 0.001229
+epoch 284 took 11 sec
+train mean loss: 0.001234
+valid mean loss: 0.001233
+epoch 285 took 11 sec
+train mean loss: 0.001237
+valid mean loss: 0.001229
+epoch 286 took 11 sec
+train mean loss: 0.001238
+valid mean loss: 0.001229
+epoch 287 took 11 sec
+train mean loss: 0.001238
+valid mean loss: 0.001230
+epoch 288 took 11 sec
+train mean loss: 0.001240
+valid mean loss: 0.001227
+epoch 289 took 11 sec
+train mean loss: 0.001233
+valid mean loss: 0.001238
+epoch 290 took 11 sec
+train mean loss: 0.001232
+valid mean loss: 0.001221
+epoch 291 took 11 sec
+train mean loss: 0.001236
+valid mean loss: 0.001227
+epoch 292 took 11 sec
+train mean loss: 0.001236
+valid mean loss: 0.001235
+epoch 293 took 11 sec
+train mean loss: 0.001231
+valid mean loss: 0.001240
+epoch 294 took 11 sec
+train mean loss: 0.001234
+valid mean loss: 0.001221
+epoch 295 took 11 sec
+train mean loss: 0.001232
+valid mean loss: 0.001227
+epoch 296 took 11 sec
+train mean loss: 0.001231
+valid mean loss: 0.001239
+epoch 297 took 12 sec
+train mean loss: 0.001235
+valid mean loss: 0.001266
+epoch 298 took 11 sec
+train mean loss: 0.001228
+valid mean loss: 0.001234
+epoch 299 took 11 sec
+train mean loss: 0.001228
+valid mean loss: 0.001232
+epoch 300 took 11 sec
+train mean loss: 0.001228
+valid mean loss: 0.001261
+epoch 301 took 11 sec
+train mean loss: 0.001234
+valid mean loss: 0.001227
+epoch 302 took 11 sec
+train mean loss: 0.001228
+valid mean loss: 0.001243
+epoch 303 took 11 sec
+train mean loss: 0.001226
+valid mean loss: 0.001228
+epoch 304 took 11 sec
+train mean loss: 0.001227
+valid mean loss: 0.001229
+epoch 305 took 11 sec
+train mean loss: 0.001229
+valid mean loss: 0.001434
+epoch 306 took 11 sec
+train mean loss: 0.001226
+valid mean loss: 0.001237
+epoch 307 took 11 sec
+train mean loss: 0.001224
+valid mean loss: 0.001229
+epoch 308 took 11 sec
+train mean loss: 0.001224
+valid mean loss: 0.001236
+epoch 309 took 11 sec
+train mean loss: 0.001223
+valid mean loss: 0.001227
+epoch 310 took 11 sec
+train mean loss: 0.001225
+valid mean loss: 0.001223
+epoch 311 took 11 sec
+train mean loss: 0.001220
+valid mean loss: 0.001234
+epoch 312 took 11 sec
+train mean loss: 0.001229
+valid mean loss: 0.001227
+epoch 313 took 11 sec
+train mean loss: 0.001217
+valid mean loss: 0.001229
+epoch 314 took 11 sec
+train mean loss: 0.001219
+valid mean loss: 0.001228
+epoch 315 took 11 sec
+train mean loss: 0.001218
+valid mean loss: 0.001230
+epoch 316 took 11 sec
+train mean loss: 0.001229
+valid mean loss: 0.001237
+epoch 317 took 11 sec
+train mean loss: 0.001215
+valid mean loss: 0.001223
+epoch 318 took 11 sec
+train mean loss: 0.001217
+valid mean loss: 0.001236
+epoch 319 took 11 sec
+train mean loss: 0.001227
+valid mean loss: 0.001258
+epoch 320 took 11 sec
+train mean loss: 0.001213
+valid mean loss: 0.001228
+epoch 321 took 11 sec
+train mean loss: 0.001216
+valid mean loss: 0.001229
+epoch 322 took 11 sec
+train mean loss: 0.001220
+valid mean loss: 0.001232
+epoch 323 took 11 sec
+train mean loss: 0.001215
+valid mean loss: 0.001251
+epoch 324 took 11 sec
+train mean loss: 0.001214
+valid mean loss: 0.001272
+epoch 325 took 11 sec
+train mean loss: 0.001213
+valid mean loss: 0.001235
+epoch 326 took 11 sec
+train mean loss: 0.001216
+valid mean loss: 0.001237
+epoch 327 took 11 sec
+train mean loss: 0.001215
+valid mean loss: 0.001231
+total training time took 3798 sec
