@@ -24,7 +24,7 @@ if __name__ == '__main__':
     # Get params (Arguments)
     parser = ArgumentParser(description='SeRanet training')
     parser.add_argument('--gpu', '-g', type=int, default=0, help='GPU ID (negative value indicates CPU)')
-    parser.add_argument('--arch', '-a', default='basic_cnn_head',
+    parser.add_argument('--arch', '-a', default='basic_cnn_small',
                         help='model selection (basic_cnn_tail, basic_cnn_middle, basic_cnn_head, basic_cnn_small, '
                              'seranet_split, seranet_v1)')
     parser.add_argument('--batchsize', '-B', type=int, default=5, help='Learning minibatch size')
@@ -85,23 +85,23 @@ if __name__ == '__main__':
     #total_image_padding = 14 #24 #18 #14
 
     print("""-------- training parameter --------
-    GPU ID        : %d
-    archtecture   : %s
-    batch size    : %d
-    epoch         : %d
-    color scheme  : %s
-    size          : %d
-    ------------------------------------
-    """ % (args.gpu, args.arch, args.batchsize, args.epoch, args.color, args.size))
+GPU ID        : %d
+archtecture   : %s
+batch size    : %d
+epoch         : %d
+color scheme  : %s
+size          : %d
+------------------------------------
+""" % (args.gpu, args.arch, args.batchsize, args.epoch, args.color, args.size))
     print("""-------- training parameter --------
-    GPU ID        : %d
-    archtecture   : %s
-    batch size    : %d
-    epoch         : %d
-    color scheme  : %s
-    size          : %d
-    ------------------------------------
-    """ % (args.gpu, args.arch, args.batchsize, args.epoch, args.color, args.size), file=train_log_file)
+GPU ID        : %d
+archtecture   : %s
+batch size    : %d
+epoch         : %d
+color scheme  : %s
+size          : %d
+------------------------------------
+""" % (args.gpu, args.arch, args.batchsize, args.epoch, args.color, args.size), file=train_log_file)
 
     """ Load data """
     print('loading data')
@@ -123,7 +123,7 @@ if __name__ == '__main__':
 
     """ Preprocess """
     #print('preprocess')
-    start_time = timeit.default_timer()
+    epoch_start_time = timeit.default_timer()
 
     def normalize_image(np_array):
         np_array /= 255.
@@ -136,7 +136,7 @@ if __name__ == '__main__':
     normalize_image(np_valid_set_y)
     normalize_image(np_test_set_y)
 
-    end_time = timeit.default_timer()
+    epoch_end_time = timeit.default_timer()
     #print('preprocess time %i sec' % (end_time - start_time))
     #print('preprocess time %i sec' % (end_time - start_time), file=train_log_file)
 
@@ -169,7 +169,7 @@ if __name__ == '__main__':
 
     patience = 30000
     patience_increase = 2
-    improvement_threshold = 0.997 # 0.995
+    improvement_threshold = 0.997  # 0.995
 
     validation_frequency = min(n_train, patience // 2) * 2
 
@@ -179,9 +179,11 @@ if __name__ == '__main__':
     test_score = 0.
     done_looping = False
 
+    training_start_time = timeit.default_timer()
+
     for epoch in xrange(1, n_epoch + 1):
         print('epoch: %d' % epoch)
-        start_time = timeit.default_timer()
+        epoch_start_time = timeit.default_timer()
         perm = np.random.permutation(n_train)
         sum_loss = 0
 
@@ -278,6 +280,10 @@ if __name__ == '__main__':
             output = None  # It is important to release memory!
             model.train = True
 
-        end_time = timeit.default_timer()
-        print('epoch %i took %i sec' % (epoch, end_time - start_time))
-        print('epoch %i took %i sec' % (epoch, end_time - start_time), file=train_log_file)
+        epoch_end_time = timeit.default_timer()
+        print('epoch %i took %i sec' % (epoch, epoch_end_time - epoch_start_time))
+        print('epoch %i took %i sec' % (epoch, epoch_end_time - epoch_start_time), file=train_log_file)
+    training_end_time = timeit.default_timer()
+    print('total training time took %i sec' % (training_end_time - training_start_time))
+    print('total training time took %i sec' % (training_end_time - training_start_time), file=train_log_file)
+
