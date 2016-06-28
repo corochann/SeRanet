@@ -23,7 +23,7 @@ if __name__ == '__main__':
 
     # Get params (Arguments)
     parser = ArgumentParser(description='SeRanet training')
-    parser.add_argument('--gpu', '-g', type=int, default=0, help='GPU ID (negative value indicates CPU)')
+    parser.add_argument('--gpu', '-g', type=int, default=-1, help='GPU ID (negative value indicates CPU)')
     parser.add_argument('--arch', '-a', default='basic_cnn_small',
                         help='model selection (basic_cnn_tail, basic_cnn_middle, basic_cnn_head, basic_cnn_small, '
                              'seranet_split, seranet_v1)')
