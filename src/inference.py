@@ -28,7 +28,7 @@ if __name__ == '__main__':
     parser.add_argument('--gpu', '-g', type=int, default=-1, help='GPU ID (negative value indicates CPU)')
     parser.add_argument('--arch', '-a', default='seranet_v1',
                         help='model selection (basic_cnn_small, '
-                             'seranet, seranet_v1)')
+                             'seranet_v1)')
     parser.add_argument('--color', '-c', default='rgb', help='application scheme for input/output color: (yonly, rgb)')
 
     args = parser.parse_args()
@@ -114,11 +114,11 @@ if __name__ == '__main__':
     """ Load data """
     print('loading data')
     input_img = cv2.imread(input_file_path, cv2.IMREAD_COLOR)
-    input_img = input_img / 255.0  # Must be handled as float
 
     print('upscaling to ', output_file_path)
     if args.color == 'rgb':
         input_img = np.transpose(input_img[:, :, :], (2, 0, 1))
+        input_img = input_img / 255.0  # Must be handled as float
         input_img = input_img.reshape((1, input_img.shape[0], input_img.shape[1], input_img.shape[2]))
         x_data = model.preprocess_x(input_img)
         x = Variable(xp.asarray(x_data), volatile='on')
@@ -131,10 +131,11 @@ if __name__ == '__main__':
 
     elif args.color == 'yonly':
         ycc_input_img = cv2.cvtColor(input_img, cv2.COLOR_BGR2YCR_CB)
-        ycc_input_img = np.transpose(ycc_input_img[:, :, :], (2, 0, 1))
-        ycc_input_img = ycc_input_img.reshape((1, ycc_input_img.shape[0], ycc_input_img.shape[1], ycc_input_img.shape[2]))
+        y_input_img = np.transpose(ycc_input_img[:, :, 0:1], (2, 0, 1))
+        y_input_img = y_input_img / 255.0  # Must be handled as float
+        y_input_img = y_input_img.reshape((1, y_input_img.shape[0], y_input_img.shape[1], y_input_img.shape[2]))
 
-        x_data = model.preprocess_x(np.transpose(ycc_input_img))
+        x_data = model.preprocess_x(y_input_img)
         x = Variable(xp.asarray(x_data), volatile='on')
         output_y_img = model(x)
         if (args.gpu >= 0):
