@@ -38,6 +38,11 @@ to learn super resolution of the image.
 
 It is developed with python on chainer framework, flexible machine learning library.
 
+Explanation material about super resolution through convolutional neural network is uploaded on SlideShare.
+
+- [SeRanet introduction - SlideShare](http://www.slideshare.net/KosukeNakago/seranet-introduction-63502152)
+- [SeRanet introduction - SlideShare (Japanese)](http://www.slideshare.net/KosukeNakago/seranet)
+
 ## References
 The project is inspired by following two reference
 
