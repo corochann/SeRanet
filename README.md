@@ -79,6 +79,10 @@ Setting up GPU (enable CUDA, cuDNN) accelerates the calculation. It is recommend
 OpenCV is used for image processing.
 [Installation page](http://docs.opencv.org/2.4/doc/tutorials/introduction/linux_install/linux_install.html)
 
+Also, please set environment variable `PYTHONPATH='.'`.
+Add below code in `~/.bashrc`.
+
+```export PYTHONPATH='.'```
 
 ## How to use
 
