@@ -82,7 +82,7 @@ OpenCV is used for image processing.
 Also, please set environment variable `PYTHONPATH='.'`.
 Add below code in `~/.bashrc`.
 
-```export PYTHONPATH='.'```
+```export PYTHONPATH=.:${PYTHONPATH}```
 
 ## How to use
 
